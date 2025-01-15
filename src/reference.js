@@ -30,7 +30,9 @@ __webpack_public_path__ = OC.linkTo('integration_openproject', 'js/') // eslint-
 registerWidget('integration_openproject_work_package', async (el, { richObjectType, richObject, accessible }) => {
 	// here we lazy load the components so it does not slow down the initial page load
 	const { default: Vue } = await import(/* webpackChunkName: "reference-wp-lazy" */'vue')
-	const { default: WorkPackageReferenceWidget } = await import(/* webpackChunkName: "reference-wp-lazy" */'./views/WorkPackageReferenceWidget.vue')
+	const { default: WorkPackageReferenceWidget } = await import(
+		/* webpackChunkName: "reference-wp-lazy" */'./views/WorkPackageReferenceWidget.vue'
+	)
 	Vue.mixin({ methods: { t, n } })
 	const Widget = Vue.extend(WorkPackageReferenceWidget)
 	new Widget({
@@ -44,7 +46,8 @@ registerWidget('integration_openproject_work_package', async (el, { richObjectTy
 
 registerCustomPickerElement('openproject-work-package-ref', async (el, { providerId, accessible }) => {
 	const { default: Vue } = await import(/* webpackChunkName: "reference-picker-lazy" */'vue')
-	const { default: WorkPackagePickerElement } = await import(/* webpackChunkName: "reference-picker-lazy" */'./views/WorkPackagePickerElement.vue')
+	const { default: WorkPackagePickerElement } = await import(
+		/* webpackChunkName: "reference-picker-lazy" */'./views/WorkPackagePickerElement.vue')
 	Vue.mixin({ methods: { t, n } })
 
 	const Element = Vue.extend(WorkPackagePickerElement)

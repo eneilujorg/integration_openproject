@@ -15,10 +15,10 @@ import Vue from 'vue'
 import './bootstrap.js'
 import PersonalSettings from './components/PersonalSettings.vue'
 
-// eslint-disable-next-line
+// eslint-disable-next-line no-unused-expressions
 'use strict'
 
-// eslint-disable-next-line
+// eslint-disable-next-line no-new
 new Vue({
 	el: '#openproject_prefs',
 	render: h => h(PersonalSettings),

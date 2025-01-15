@@ -135,11 +135,14 @@ describe('ProjectsTab.vue', () => {
 		})
 	})
 	describe('empty content', () => {
-		it.each([STATE.NO_TOKEN, STATE.ERROR, STATE.OK])('shows the empty message when state is other than loading', async (state) => {
-			wrapper.setData({ state })
-			await localVue.nextTick()
-			expect(wrapper.find(emptyContentSelector).exists()).toBeTruthy()
-		})
+		it.each([STATE.NO_TOKEN, STATE.ERROR, STATE.OK])(
+			'shows the empty message when state is other than loading',
+			async (state) => {
+				wrapper.setData({ state })
+				await localVue.nextTick()
+				expect(wrapper.find(emptyContentSelector).exists()).toBeTruthy()
+			},
+		)
 		it('should set projects as empty when the list of linked work packages are empty', () => {
 			expect(wrapper.classes()).toContain('projects--empty')
 		})

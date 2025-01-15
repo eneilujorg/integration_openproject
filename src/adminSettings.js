@@ -15,10 +15,10 @@ import Vue from 'vue'
 import './bootstrap.js'
 import AdminSettings from './components/AdminSettings.vue'
 
-// eslint-disable-next-line
+// eslint-disable-next-line no-unused-expressions
 'use strict'
 
-// eslint-disable-next-line
+// eslint-disable-next-line no-new
 new Vue({
 	el: '#openproject_prefs',
 	render: h => h(AdminSettings),

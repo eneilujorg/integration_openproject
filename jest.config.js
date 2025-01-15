@@ -1,6 +1,3 @@
-const path = require('path')
-const rootDir = path.resolve(__dirname, '../../../')
-
 module.exports = {
 	testMatch: ['**/tests/**/*.spec.{js,ts}'],
 	moduleNameMapper: {
@@ -10,6 +7,7 @@ module.exports = {
 	transform: {
 		// process *.vue files with vue-jest
 		'\\.vue$': '@vue/vue2-jest',
+		// eslint-disable-next-line max-len
 		'.+\\.(css|styl|less|sass|scss|jpg|jpeg|png|svg|gif|eot|otf|webp|ttf|woff|woff2|mp4|webm|wav|mp3|m4a|aac|oga|avif)$':
 			'jest-transform-stub',
 		'\\.c?js$': 'babel-jest',

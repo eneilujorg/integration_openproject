@@ -9,11 +9,11 @@
   "scripts": {
     "build": "NODE_ENV=production webpack --progress --config webpack.js",
     "dev": "NODE_ENV=development webpack --progress --config webpack.js",
-    "watch": "NODE_ENV=development webpack --progress --watch --config webpack.js",
+    "watch": "npm run dev -- --watch",
     "lint": "eslint --ext .js,.vue src tests",
-    "lint:fix": "eslint --ext .js,.vue src tests --fix",
+    "lint:fix": "npm run lint -- --fix",
     "stylelint": "stylelint css src",
-    "stylelint:fix": "stylelint css src --fix",
+    "stylelint:fix": "npm run stylelint -- --fix",
     "test:unit": "jest --silent",
     "test:unit:watch": "jest --watch --no-coverage"
   },

@@ -161,11 +161,14 @@ describe('LinkMultipleFilesModal.vue', () => {
 		beforeEach(() => {
 			wrapper = mountWrapper()
 		})
-		it.each([STATE.NO_TOKEN, STATE.ERROR, STATE.OK])('shows the empty message when state is other than loading', async (state) => {
-			await wrapper.setData({ state })
-			await localVue.nextTick()
-			expect(wrapper.find(emptyContentSelector).exists()).toBeTruthy()
-		})
+		it.each([STATE.NO_TOKEN, STATE.ERROR, STATE.OK])(
+			'shows the empty message when state is other than loading',
+			async (state) => {
+				await wrapper.setData({ state })
+				await localVue.nextTick()
+				expect(wrapper.find(emptyContentSelector).exists()).toBeTruthy()
+			},
+		)
 
 		it('shows message "Add a new link to all selected files" when admin config is okay', async () => {
 			wrapper = mount(LinkMultipleFilesModal, {
