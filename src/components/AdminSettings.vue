@@ -127,7 +127,8 @@
 				:title="t('integration_openproject', 'Authorization settings')"
 				:is-complete="isAuthorizationSettingFormComplete"
 				:is-disabled="isAuthorizationSettingFormInDisabledMode"
-				:is-dark-theme="isDarkTheme" />
+				:is-dark-theme="isDarkTheme"
+				:has-error="!isOIDCAppInstalledAndEnabled" />
 			<div class="authorization-settings--content">
 				<ErrorNote
 					v-if="!isOIDCAppInstalledAndEnabled"
@@ -330,7 +331,7 @@
 				:is-project-folder-setup-heading="true"
 				:title="t('integration_openproject', 'Project folders (recommended)')"
 				:is-setup-complete-without-project-folders="isSetupCompleteWithoutProjectFolders"
-				:is-there-error-after-project-folder-and-app-password-setup="isThereErrorAfterProjectFolderAndAppPasswordSetup"
+				:has-error="isThereErrorAfterProjectFolderAndAppPasswordSetup"
 				:show-encryption-warning-for-group-folders="showEncryptionWarningForGroupFolders"
 				:is-complete="isProjectFolderSetupCompleted"
 				:is-disabled="isProjectFolderSetUpInDisableMode"
