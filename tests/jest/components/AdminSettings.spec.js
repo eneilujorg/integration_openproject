@@ -873,7 +873,12 @@ describe('AdminSettings.vue', () => {
 			it('should disable "OpenID identity provider" radio button for user_oidc app not installed', async () => {
 				await wrapper.setData({
 					state: {
-						user_oidc_enabled: false,
+						apps: {
+							user_oidc: {
+								installed: false,
+								enabled: false,
+							},
+						},
 					},
 				})
 				const openIDProviderDisabled = wrapper.find(selectors.openIdIdentityDisabled)
@@ -883,7 +888,12 @@ describe('AdminSettings.vue', () => {
 			it('should not disable "OpenID identity provider" radio button for user_oidc app installed', async () => {
 				await wrapper.setData({
 					state: {
-						user_oidc_enabled: true,
+						apps: {
+							user_oidc: {
+								installed: true,
+								enabled: true,
+							},
+						},
 					},
 				})
 				expect(wrapper.find(selectors.openIdIdentityDisabled).exists()).toBe(false)
@@ -908,7 +918,12 @@ describe('AdminSettings.vue', () => {
 			it('should show authorization settings form for "oidc" method selected', async () => {
 				await wrapper.setData({
 					state: {
-						user_oidc_enabled: true,
+						apps: {
+							user_oidc: {
+								installed: true,
+								enabled: true,
+							},
+						},
 						authorization_settings: {
 							oidc_provider: null,
 							targeted_audience_client_id: null,
@@ -977,7 +992,12 @@ describe('AdminSettings.vue', () => {
 				it('should enable "save" button when OIDC auth is selected', async () => {
 					await wrapper.setData({
 						state: {
-							user_oidc_enabled: true,
+							apps: {
+								user_oidc: {
+									installed: true,
+									enabled: true,
+								},
+							},
 						},
 					})
 					const authMethodSaveButton = authorizationMethodForm.find(selectors.authorizationMethodSaveButton)
@@ -990,7 +1010,12 @@ describe('AdminSettings.vue', () => {
 					it('should open auth method switch dialog confirm "Yes, Switch"', async () => {
 						await wrapper.setData({
 							state: {
-								user_oidc_enabled: true,
+								apps: {
+									user_oidc: {
+										installed: true,
+										enabled: true,
+									},
+								},
 							},
 						})
 						const expectedDialogMessage = 'If you proceed this method, you will have an OIDC based authorization configuration which will delete'
@@ -1053,7 +1078,12 @@ describe('AdminSettings.vue', () => {
 					})
 					await wrapper.setData({
 						state: {
-							user_oidc_enabled: true,
+							apps: {
+								user_oidc: {
+									installed: true,
+									enabled: true,
+								},
+							},
 						},
 					})
 					authorizationMethodForm = wrapper.find(selectors.authorizationMethod)

@@ -129,6 +129,12 @@
 				:is-disabled="isAuthorizationSettingFormInDisabledMode"
 				:is-dark-theme="isDarkTheme" />
 			<div class="authorization-settings--content">
+				<ErrorNote
+					v-if="!isOIDCAppInstalledAndEnabled"
+					:error-title="errorMessagesFmt.appNotInstalled('user_oidc')"
+					:error-message="errorMessages.appRequired"
+					:error-link="appLinks.user_oidc.installLink"
+					:error-link-label="errorMessages.downloadAndEnableApp" />
 				<FieldValue v-if="isAuthorizationSettingsInViewMode"
 					is-required
 					class="pb-1"
@@ -141,6 +147,7 @@
 					<div id="select">
 						<NcSelect
 							input-id="provider-search-input"
+							:disabled="!isOIDCAppInstalledAndEnabled"
 							:placeholder="t('integration_openproject', 'Select an OIDC provider')"
 							:options="registeredOidcProviders"
 							:value="getCurrentSelectedOIDCProvider"
@@ -163,8 +170,10 @@
 					<TextInput
 						id="authorization-method-target-client-id"
 						v-model="state.authorization_settings.targeted_audience_client_id"
-						class="py-1"
 						is-required
+						class="py-1"
+						:disabled="!isOIDCAppInstalledAndEnabled"
+						:place-holder="infoMessages.opClientIdPlaceholder"
 						:label="t('integration_openproject', 'OpenProject client ID')"
 						hint-text="You can get this value from Keycloak when you set-up define the client" />
 				</div>
@@ -526,9 +535,13 @@ import FieldValue from './admin/FieldValue.vue'
 import FormHeading from './admin/FormHeading.vue'
 import CheckBox from '../components/settings/CheckBox.vue'
 import SettingsTitle from '../components/settings/SettingsTitle.vue'
+import ErrorNote from './settings/ErrorNote.vue'
 import { F_MODES, FORM, USER_SETTINGS, AUTH_METHOD, AUTH_METHOD_LABEL } from '../utils.js'
 import TermsOfServiceUnsigned from './admin/TermsOfServiceUnsigned.vue'
 import dompurify from 'dompurify'
+import { error as errorMessages, errorFmt as errorMessagesFmt, info as infoMessages } from '../constants/messages.js'
+import { appLinks } from '../constants/links.js'
+
 export default {
 	name: 'AdminSettings',
 	components: {
@@ -547,6 +560,7 @@ export default {
 		NcCheckboxRadioSwitch,
 		TermsOfServiceUnsigned,
 		NcNoteCard,
+		ErrorNote,
 	},
 	data() {
 		return {
@@ -613,6 +627,10 @@ export default {
 				currentTargetedAudienceClientIdSelected: null,
 			},
 			registeredOidcProviders: [],
+			errorMessages,
+			errorMessagesFmt,
+			infoMessages,
+			appLinks,
 		}
 	},
 	computed: {
@@ -828,11 +846,15 @@ export default {
 			return this.state.authorization_settings.targeted_audience_client_id
 		},
 		isOIDCAppInstalledAndEnabled() {
-			return this.state.user_oidc_enabled
+			return this.state.apps.user_oidc.installed && this.state.apps.user_oidc.enabled
 		},
 	},
 	created() {
 		this.init()
+		// eslint-disable-next-line no-console
+		console.log(this.state.oidc_provider)
+		// eslint-disable-next-line no-console
+		console.log((this.state.oidc_state))
 	},
 	mounted() {
 		this.isDarkTheme = window.getComputedStyle(this.$el).getPropertyValue('--background-invert-if-dark') === 'invert(100%)'
@@ -954,7 +976,7 @@ export default {
 			}
 		},
 		projectFolderSetUpErrorMessageDescription(errorKey) {
-			const linkText = t('integration_openproject', 'Download and enable it here')
+			const linkText = t('integration_openproject', 'Download and enable it')
 			const url = generateUrl('settings/apps/files/groupfolders')
 			const htmlLink = `<a class="link" href="${url}" target="_blank" title="${linkText}">${linkText}</a>`
 			switch (errorKey) {

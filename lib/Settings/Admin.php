@@ -5,6 +5,7 @@ namespace OCA\OpenProject\Settings;
 use OCA\OpenProject\AppInfo\Application;
 use OCA\OpenProject\Service\OauthService;
 use OCA\OpenProject\Service\OpenProjectAPIService;
+use OCP\App\IAppManager;
 use OCP\AppFramework\Http\TemplateResponse;
 use OCP\AppFramework\Services\IInitialState;
 
@@ -31,15 +32,22 @@ class Admin implements ISettings {
 	 */
 	private $openProjectAPIService;
 
+	/**
+	 * @var IAppManager
+	 */
+	private $appManager;
+
 	public function __construct(IConfig $config,
 		OauthService $oauthService,
 		OpenProjectAPIService $openProjectAPIService,
-		IInitialState $initialStateService
+		IInitialState $initialStateService,
+		IAppManager $appManager
 	) {
 		$this->config = $config;
 		$this->initialStateService = $initialStateService;
 		$this->oauthService = $oauthService;
 		$this->openProjectAPIService = $openProjectAPIService;
+		$this->appManager = $appManager;
 	}
 
 	/**
@@ -85,7 +93,16 @@ class Admin implements ISettings {
 				'encryption_enabled_for_groupfolders' => $this->config->getAppValue('groupfolders', 'enable_encryption', '') === 'true'
 			],
 			'oidc_provider' => $this->openProjectAPIService->getRegisteredOidcProviders(),
-			'user_oidc_enabled' => $this->openProjectAPIService->isUserOIDCAppInstalledAndEnabled()
+			'apps' => [
+				'groupfolders' => [
+					'installed' => $this->appManager->isInstalled('groupfolders'),
+					'enabled' => $this->appManager->isEnabledForUser('groupfolders')
+				],
+				'user_oidc' => [
+					'installed' => $this->appManager->isInstalled('user_oidc'),
+					'enabled' => $this->appManager->isEnabledForUser('user_oidc')
+				],
+			],
 		];
 
 		$this->initialStateService->provideInitialState('admin-config', $adminConfig);
