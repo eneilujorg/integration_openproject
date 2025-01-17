@@ -6,7 +6,7 @@ export const info = {
 }
 
 export const error = {
-	appRequired: t(APP_ID, 'This app is required'),
+	appRequiredForOIDCMethod: t(APP_ID, 'This app is required to use the OIDC authorization method'),
 	downloadAndEnableApp: t(APP_ID, 'Download and enable it'),
 	featureNotAvailable: t(APP_ID, 'This feature is not available for this user account'),
 	opConnectionUnauthorized: t(APP_ID, 'Unauthorized to connect to OpenProject'),

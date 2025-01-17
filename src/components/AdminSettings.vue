@@ -81,11 +81,11 @@
 						<NcCheckboxRadioSwitch class="radio-check"
 							:checked.sync="authorizationMethod.authorizationMethodSet"
 							:value="authMethods.OIDC"
-							:disabled="!isOIDCAppInstalledAndEnabled"
+							:disabled="!isUserOIDCAppEnabled"
 							type="radio">
 							{{ authMethodsLabel.OIDC }}
 						</NcCheckboxRadioSwitch>
-						<p v-if="!isOIDCAppInstalledAndEnabled" class="oidc-app-check-description" v-html="getOIDCAppNotInstalledHintText" /> <!-- eslint-disable-line vue/no-v-html -->
+						<p v-if="!isUserOIDCAppEnabled" class="oidc-app-check-description" v-html="getOIDCAppNotInstalledHintText" /> <!-- eslint-disable-line vue/no-v-html -->
 					</div>
 				</div>
 				<div v-else>
@@ -128,12 +128,12 @@
 				:is-complete="isAuthorizationSettingFormComplete"
 				:is-disabled="isAuthorizationSettingFormInDisabledMode"
 				:is-dark-theme="isDarkTheme"
-				:has-error="!isOIDCAppInstalledAndEnabled" />
+				:has-error="!isUserOIDCAppEnabled" />
 			<div class="authorization-settings--content">
 				<ErrorNote
-					v-if="!isOIDCAppInstalledAndEnabled"
+					v-if="!isUserOIDCAppEnabled"
 					:error-title="errorMessagesFmt.appNotInstalled('user_oidc')"
-					:error-message="errorMessages.appRequired"
+					:error-message="errorMessages.appRequiredForOIDCMethod"
 					:error-link="appLinks.user_oidc.installLink"
 					:error-link-label="errorMessages.downloadAndEnableApp" />
 				<FieldValue v-if="isAuthorizationSettingsInViewMode"
@@ -148,7 +148,7 @@
 					<div id="select">
 						<NcSelect
 							input-id="provider-search-input"
-							:disabled="!isOIDCAppInstalledAndEnabled"
+							:disabled="!isUserOIDCAppEnabled"
 							:placeholder="t('integration_openproject', 'Select an OIDC provider')"
 							:options="registeredOidcProviders"
 							:value="getCurrentSelectedOIDCProvider"
@@ -173,7 +173,7 @@
 						v-model="state.authorization_settings.targeted_audience_client_id"
 						is-required
 						class="py-1"
-						:disabled="!isOIDCAppInstalledAndEnabled"
+						:disabled="!isUserOIDCAppEnabled"
 						:place-holder="infoMessages.opClientIdPlaceholder"
 						:label="t('integration_openproject', 'OpenProject client ID')"
 						hint-text="You can get this value from Keycloak when you set-up define the client" />
@@ -846,16 +846,12 @@ export default {
 		getCurrentSelectedTargetedClientId() {
 			return this.state.authorization_settings.targeted_audience_client_id
 		},
-		isOIDCAppInstalledAndEnabled() {
-			return this.state.apps.user_oidc.installed && this.state.apps.user_oidc.enabled
+		isUserOIDCAppEnabled() {
+			return this.state.apps.user_oidc.enabled
 		},
 	},
 	created() {
 		this.init()
-		// eslint-disable-next-line no-console
-		console.log(this.state.oidc_provider)
-		// eslint-disable-next-line no-console
-		console.log((this.state.oidc_state))
 	},
 	mounted() {
 		this.isDarkTheme = window.getComputedStyle(this.$el).getPropertyValue('--background-invert-if-dark') === 'invert(100%)'
