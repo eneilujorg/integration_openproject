@@ -129,13 +129,13 @@
 				:is-disabled="isAuthorizationSettingFormInDisabledMode"
 				:is-dark-theme="isDarkTheme"
 				:has-error="!isUserOIDCAppEnabled" />
+			<ErrorNote
+				v-if="!isUserOIDCAppEnabled"
+				:error-title="errorMessagesFmt.appNotInstalled('user_oidc')"
+				:error-message="errorMessages.appRequiredForOIDCMethod"
+				:error-link="appLinks.user_oidc.installLink"
+				:error-link-label="errorMessages.downloadAndEnableApp" />
 			<div class="authorization-settings--content">
-				<ErrorNote
-					v-if="!isUserOIDCAppEnabled"
-					:error-title="errorMessagesFmt.appNotInstalled('user_oidc')"
-					:error-message="errorMessages.appRequiredForOIDCMethod"
-					:error-link="appLinks.user_oidc.installLink"
-					:error-link-label="errorMessages.downloadAndEnableApp" />
 				<FieldValue v-if="isAuthorizationSettingsInViewMode"
 					is-required
 					class="pb-1"
@@ -181,6 +181,7 @@
 			</div>
 			<div class="form-actions">
 				<NcButton v-if="isAuthorizationSettingsInViewMode"
+					:disabled="!isUserOIDCAppEnabled"
 					data-test-id="reset-auth-settings-btn"
 					@click="setAuthorizationSettingInEditMode">
 					<template #icon>

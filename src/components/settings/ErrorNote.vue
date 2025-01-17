@@ -41,3 +41,14 @@ export default {
 	},
 }
 </script>
+
+<style lang="scss">
+.note-card {
+	max-width: 900px;
+}
+
+.link {
+	color: #1a67a3 !important;
+	font-style: normal;
+}
+</style>
