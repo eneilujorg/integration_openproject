@@ -1,0 +1,173 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Component: ErrorNote should show all provided props 1`] = `
+<div
+  class="notecard note-card notecard--error"
+  data-v-722d543a=""
+  role="alert"
+>
+  <span
+    aria-hidden="true"
+    class="material-design-icon alert-decagram-icon notecard__icon"
+    data-v-722d543a=""
+    role="img"
+  >
+    <svg
+      class="material-design-icon__svg"
+      fill="var(--color-error)"
+      height="24"
+      viewBox="0 0 24 24"
+      width="24"
+    >
+      <path
+        d="M23,12L20.56,9.22L20.9,5.54L17.29,4.72L15.4,1.54L12,3L8.6,1.54L6.71,4.72L3.1,5.53L3.44,9.21L1,12L3.44,14.78L3.1,18.47L6.71,19.29L8.6,22.47L12,21L15.4,22.46L17.29,19.28L20.9,18.46L20.56,14.78L23,12M13,17H11V15H13V17M13,13H11V7H13V13Z"
+      >
+        <!---->
+      </path>
+    </svg>
+  </span>
+  <div
+    data-v-722d543a=""
+  >
+    <!---->
+    <p
+      class="note-card--title"
+      data-v-722d543a=""
+    >
+      <b
+        data-v-722d543a=""
+      >
+        Test error
+      </b>
+    </p>
+     
+    <p
+      class="note-card--error-description"
+      data-v-722d543a=""
+    >
+      <span
+        data-v-722d543a=""
+      >
+        Test error message. 
+      </span>
+      <a
+        class="link"
+        data-v-722d543a=""
+        href="http://example.com"
+        target="_blank"
+        title="Test link"
+      >
+        Test link
+      </a>
+    </p>
+  </div>
+</div>
+`;
+
+exports[`Component: ErrorNote should show error title 1`] = `
+<div
+  class="notecard note-card notecard--error"
+  data-v-722d543a=""
+  role="alert"
+>
+  <span
+    aria-hidden="true"
+    class="material-design-icon alert-decagram-icon notecard__icon"
+    data-v-722d543a=""
+    role="img"
+  >
+    <svg
+      class="material-design-icon__svg"
+      fill="var(--color-error)"
+      height="24"
+      viewBox="0 0 24 24"
+      width="24"
+    >
+      <path
+        d="M23,12L20.56,9.22L20.9,5.54L17.29,4.72L15.4,1.54L12,3L8.6,1.54L6.71,4.72L3.1,5.53L3.44,9.21L1,12L3.44,14.78L3.1,18.47L6.71,19.29L8.6,22.47L12,21L15.4,22.46L17.29,19.28L20.9,18.46L20.56,14.78L23,12M13,17H11V15H13V17M13,13H11V7H13V13Z"
+      >
+        <!---->
+      </path>
+    </svg>
+  </span>
+  <div
+    data-v-722d543a=""
+  >
+    <!---->
+    <p
+      class="note-card--title"
+      data-v-722d543a=""
+    >
+      <b
+        data-v-722d543a=""
+      >
+        Test error
+      </b>
+    </p>
+     
+    <p
+      class="note-card--error-description"
+      data-v-722d543a=""
+    >
+      <!---->
+      <!---->
+    </p>
+  </div>
+</div>
+`;
+
+exports[`Component: ErrorNote should show error title and error message 1`] = `
+<div
+  class="notecard note-card notecard--error"
+  data-v-722d543a=""
+  role="alert"
+>
+  <span
+    aria-hidden="true"
+    class="material-design-icon alert-decagram-icon notecard__icon"
+    data-v-722d543a=""
+    role="img"
+  >
+    <svg
+      class="material-design-icon__svg"
+      fill="var(--color-error)"
+      height="24"
+      viewBox="0 0 24 24"
+      width="24"
+    >
+      <path
+        d="M23,12L20.56,9.22L20.9,5.54L17.29,4.72L15.4,1.54L12,3L8.6,1.54L6.71,4.72L3.1,5.53L3.44,9.21L1,12L3.44,14.78L3.1,18.47L6.71,19.29L8.6,22.47L12,21L15.4,22.46L17.29,19.28L20.9,18.46L20.56,14.78L23,12M13,17H11V15H13V17M13,13H11V7H13V13Z"
+      >
+        <!---->
+      </path>
+    </svg>
+  </span>
+  <div
+    data-v-722d543a=""
+  >
+    <!---->
+    <p
+      class="note-card--title"
+      data-v-722d543a=""
+    >
+      <b
+        data-v-722d543a=""
+      >
+        Test error
+      </b>
+    </p>
+     
+    <p
+      class="note-card--error-description"
+      data-v-722d543a=""
+    >
+      <span
+        data-v-722d543a=""
+      >
+        Test error message. 
+      </span>
+      <!---->
+    </p>
+  </div>
+</div>
+`;
