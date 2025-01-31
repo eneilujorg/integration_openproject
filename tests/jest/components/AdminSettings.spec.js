@@ -1168,6 +1168,7 @@ describe('AdminSettings.vue', () => {
 							oidc_provider: 'some-oidc-provider',
 							targeted_audience_client_id: 'some-target-aud-client-id',
 						},
+						user_oidc_enabled: true,
 					},
 				})
 				authorizationSettingsForm = wrapper.find(selectors.authorizationSettings)
@@ -1176,6 +1177,7 @@ describe('AdminSettings.vue', () => {
 			})
 
 			it('should show authorization settings in view mode', () => {
+				// console.log(wrapper.html())
 				expect(wrapper.vm.formMode.authorizationSetting).toBe(F_MODES.EDIT)
 			})
 
@@ -1281,6 +1283,9 @@ describe('AdminSettings.vue', () => {
 					jest.clearAllMocks()
 					await wrapper.setData({
 						registeredOidcProviders: ['keycloak'],
+						state: {
+							user_oidc_enabled: true,
+						},
 					})
 					const providerInputField = wrapper.find(selectors.providerInput)
 					await providerInputField.setValue('key')

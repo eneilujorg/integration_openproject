@@ -106,7 +106,7 @@ phpunitforphp8.0:
 
 .PHONY: jsunit
 jsunit:
-	npm run test:unit
+	npm run test:unit -- --silent
 
 .PHONY: api-test
 api-test:
