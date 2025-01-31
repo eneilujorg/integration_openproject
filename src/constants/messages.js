@@ -1,10 +1,6 @@
 import { translate as t } from '@nextcloud/l10n'
 import APP_ID from './appID.js'
 
-export const info = {
-	opClientIdPlaceholder: t(APP_ID, 'OpenProject client ID'),
-}
-
 export const error = {
 	appRequiredForOIDCMethod: t(APP_ID, 'This app is required to use the OIDC authorization method'),
 	downloadAndEnableApp: t(APP_ID, 'Download and enable it'),

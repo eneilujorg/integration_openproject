@@ -81,11 +81,11 @@
 						<NcCheckboxRadioSwitch class="radio-check"
 							:checked.sync="authorizationMethod.authorizationMethodSet"
 							:value="authMethods.OIDC"
-							:disabled="!isUserOIDCAppEnabled"
+							:disabled="!isOIDCAppInstalledAndEnabled"
 							type="radio">
 							{{ authMethodsLabel.OIDC }}
 						</NcCheckboxRadioSwitch>
-						<p v-if="!isUserOIDCAppEnabled" class="oidc-app-check-description" v-html="getOIDCAppNotInstalledHintText" /> <!-- eslint-disable-line vue/no-v-html -->
+						<p v-if="!isOIDCAppInstalledAndEnabled" class="oidc-app-check-description" v-html="getOIDCAppNotInstalledHintText" /> <!-- eslint-disable-line vue/no-v-html -->
 					</div>
 				</div>
 				<div v-else>
@@ -128,9 +128,9 @@
 				:is-complete="isAuthorizationSettingFormComplete"
 				:is-disabled="isAuthorizationSettingFormInDisabledMode"
 				:is-dark-theme="isDarkTheme"
-				:has-error="!isUserOIDCAppEnabled" />
+				:has-error="!isOIDCAppInstalledAndEnabled" />
 			<ErrorNote
-				v-if="!isUserOIDCAppEnabled"
+				v-if="!isOIDCAppInstalledAndEnabled"
 				:error-title="errorMessagesFmt.appNotInstalled('user_oidc')"
 				:error-message="errorMessages.appRequiredForOIDCMethod"
 				:error-link="appLinks.user_oidc.installLink"
@@ -148,7 +148,7 @@
 					<div id="select">
 						<NcSelect
 							input-id="provider-search-input"
-							:disabled="!isUserOIDCAppEnabled"
+							:disabled="!isOIDCAppInstalledAndEnabled"
 							:placeholder="t('integration_openproject', 'Select an OIDC provider')"
 							:options="registeredOidcProviders"
 							:value="getCurrentSelectedOIDCProvider"
@@ -171,17 +171,17 @@
 					<TextInput
 						id="authorization-method-target-client-id"
 						v-model="state.authorization_settings.targeted_audience_client_id"
-						is-required
 						class="py-1"
-						:disabled="!isUserOIDCAppEnabled"
-						:place-holder="infoMessages.opClientIdPlaceholder"
+						is-required
+						place-holder="OpenProject client ID"
 						:label="t('integration_openproject', 'OpenProject client ID')"
-						hint-text="You can get this value from Keycloak when you set-up define the client" />
+						hint-text="You can get this value from Keycloak when you set-up define the client"
+						:disabled="!isOIDCAppInstalledAndEnabled" />
 				</div>
 			</div>
 			<div class="form-actions">
 				<NcButton v-if="isAuthorizationSettingsInViewMode"
-					:disabled="!isUserOIDCAppEnabled"
+					:disabled="!isOIDCAppInstalledAndEnabled"
 					data-test-id="reset-auth-settings-btn"
 					@click="setAuthorizationSettingInEditMode">
 					<template #icon>
@@ -541,7 +541,7 @@ import ErrorNote from './settings/ErrorNote.vue'
 import { F_MODES, FORM, USER_SETTINGS, AUTH_METHOD, AUTH_METHOD_LABEL } from '../utils.js'
 import TermsOfServiceUnsigned from './admin/TermsOfServiceUnsigned.vue'
 import dompurify from 'dompurify'
-import { error as errorMessages, errorFmt as errorMessagesFmt, info as infoMessages } from '../constants/messages.js'
+import { error as errorMessages, errorFmt as errorMessagesFmt } from '../constants/messages.js'
 import { appLinks } from '../constants/links.js'
 
 export default {
@@ -631,7 +631,6 @@ export default {
 			registeredOidcProviders: [],
 			errorMessages,
 			errorMessagesFmt,
-			infoMessages,
 			appLinks,
 		}
 	},
@@ -847,8 +846,8 @@ export default {
 		getCurrentSelectedTargetedClientId() {
 			return this.state.authorization_settings.targeted_audience_client_id
 		},
-		isUserOIDCAppEnabled() {
-			return this.state.apps.user_oidc.enabled
+		isOIDCAppInstalledAndEnabled() {
+			return this.state.user_oidc_enabled
 		},
 	},
 	created() {
@@ -974,7 +973,7 @@ export default {
 			}
 		},
 		projectFolderSetUpErrorMessageDescription(errorKey) {
-			const linkText = t('integration_openproject', 'Download and enable it')
+			const linkText = this.errorMessages.downloadAndEnableApp
 			const url = generateUrl('settings/apps/files/groupfolders')
 			const htmlLink = `<a class="link" href="${url}" target="_blank" title="${linkText}">${linkText}</a>`
 			switch (errorKey) {
