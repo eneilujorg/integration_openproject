@@ -175,7 +175,7 @@
 						is-required
 						place-holder="OpenProject client ID"
 						:label="t('integration_openproject', 'OpenProject client ID')"
-						hint-text="You can get this value from Keycloak when you set-up define the client"
+						:hint-text="t('integration_openproject', 'You can get this value from Keycloak when you set-up define the client')"
 						:disabled="!isOIDCAppInstalledAndEnabled" />
 				</div>
 			</div>
