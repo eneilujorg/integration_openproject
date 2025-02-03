@@ -6,7 +6,7 @@ import { createLocalVue, shallowMount, mount } from '@vue/test-utils'
 import AdminSettings from '../../../src/components/AdminSettings.vue'
 import { F_MODES, AUTH_METHOD } from '../../../src/utils.js'
 import { appLinks } from '../../../src/constants/links.js'
-import { error, errorFmt } from '../../../src/constants/messages.js'
+import { messages, messagesFmt } from '../../../src/constants/messages.js'
 
 jest.mock('@nextcloud/axios', () => {
 	const originalModule = jest.requireActual('@nextcloud/axios')
@@ -1197,8 +1197,8 @@ describe('AdminSettings.vue', () => {
 					expect(formHeader.exists()).toBe(true)
 					expect(formHeader.attributes().haserror).toBe('true')
 					expect(errorNote.exists()).toBe(true)
-					expect(errorNote.attributes().errortitle).toBe(errorFmt.appNotInstalled())
-					expect(errorNote.attributes().errormessage).toBe(error.appRequiredForOIDCMethod)
+					expect(errorNote.attributes().errortitle).toBe(messagesFmt.appNotInstalled())
+					expect(errorNote.attributes().errormessage).toBe(messages.appRequiredForOIDCMethod)
 					expect(errorNote.attributes().errorlink).toBe(appLinks.user_oidc.installLink)
 				})
 			})
@@ -1385,8 +1385,8 @@ describe('AdminSettings.vue', () => {
 					expect(formHeaderError.exists()).toBe(true)
 					expect(formHeaderError.attributes().haserror).toBe('true')
 					expect(errorNote.exists()).toBe(true)
-					expect(errorNote.attributes().errortitle).toBe(errorFmt.appNotInstalled())
-					expect(errorNote.attributes().errormessage).toBe(error.appRequiredForOIDCMethod)
+					expect(errorNote.attributes().errortitle).toBe(messagesFmt.appNotInstalled())
+					expect(errorNote.attributes().errormessage).toBe(messages.appRequiredForOIDCMethod)
 					expect(errorNote.attributes().errorlink).toBe(appLinks.user_oidc.installLink)
 				})
 				it('should disable form elements', () => {

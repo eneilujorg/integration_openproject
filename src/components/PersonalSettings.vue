@@ -2,8 +2,8 @@
 	<div class="openproject-prefs section">
 		<SettingsTitle is-setting="personal" />
 		<div class="openproject-prefs--content">
-			<ErrorLabel v-if="!connected && isOIDCAuthMethod && state.oidc_user" :error="errorMessages.opConnectionUnauthorized" />
-			<ErrorLabel v-if="isOIDCAuthMethod && !state.oidc_user" :error="errorMessages.featureNotAvailable" />
+			<ErrorLabel v-if="!connected && isOIDCAuthMethod && state.oidc_user" :error="messages.opConnectionUnauthorized" />
+			<ErrorLabel v-if="isOIDCAuthMethod && !state.oidc_user" :error="messages.featureNotAvailable" />
 			<div v-if="showConnectionSettings">
 				<div class="openproject-prefs--connected">
 					<label>
@@ -59,7 +59,7 @@ import CheckBox from './settings/CheckBox.vue'
 import { translate as t } from '@nextcloud/l10n'
 import { checkOauthConnectionResult, USER_SETTINGS, AUTH_METHOD } from '../utils.js'
 import { NcButton } from '@nextcloud/vue'
-import { error as errorMessages } from '../constants/messages.js'
+import { messages } from '../constants/messages.js'
 import ErrorLabel from './ErrorLabel.vue'
 
 export default {
@@ -83,7 +83,7 @@ export default {
 			oauthConnectionErrorMessage: loadState('integration_openproject', 'oauth-connection-error-message'),
 			oauthConnectionResult: loadState('integration_openproject', 'oauth-connection-result'),
 			userSettingDescription: USER_SETTINGS,
-			errorMessages,
+			messages,
 		}
 	},
 	computed: {

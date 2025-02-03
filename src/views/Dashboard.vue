@@ -7,7 +7,7 @@
 		@markAsRead="onMarkAsRead">
 		<template #empty-content>
 			<div v-if="isNonOidcUserConnectedViaOidc" class="demo-error-oidc">
-				{{ errorMessages.featureNotAvailable }}
+				{{ messages.featureNotAvailable }}
 			</div>
 			<div v-else>
 				<EmptyContent v-if="emptyContentMessage"
@@ -30,7 +30,7 @@ import { loadState } from '@nextcloud/initial-state'
 import { AUTH_METHOD, checkOauthConnectionResult, STATE } from '../utils.js'
 import { translate as t } from '@nextcloud/l10n'
 import EmptyContent from '../components/tab/EmptyContent.vue'
-import { error as errorMessages } from '../constants/messages.js'
+import { messages } from '../constants/messages.js'
 
 export default {
 	name: 'Dashboard',
@@ -66,7 +66,7 @@ export default {
 				},
 			},
 			authMethods: AUTH_METHOD,
-			errorMessages,
+			messages,
 		}
 	},
 	computed: {
