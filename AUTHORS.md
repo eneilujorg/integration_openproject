@@ -21,11 +21,10 @@
 - Parajuli Kiran <kiranparajuli589@gmail.com>
 - Parimal Satyal <88370597+psatyal@users.noreply.github.com>
 - Phil Davis <phil@jankaritech.com>
-- PKiran <39373750+kiranparajuli589@users.noreply.github.com>
 - q-wertz <clemens.sonnleitner@web.de>
 - rakekniven <2069590+rakekniven@users.noreply.github.com>
 - Rello <Rello@users.noreply.github.com>
-- Sagar <sagargurung1001@gmail.com>
+- Sagar Gurung <sagargurung1001@gmail.com>
 - Sawjan Gurung <saw.jan.grg3e@gmail.com>
 - Swikriti Tripathi <swikriti808@gmail.com>
 - Valdnet <47037905+Valdnet@users.noreply.github.com>

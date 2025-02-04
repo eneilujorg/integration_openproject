@@ -1,5 +1,12 @@
 <?php
 
+/**
+ * SPDX-FileCopyrightText: 2022 Kiran Parajuli <kiranparajuli589@gmail.com>
+ * SPDX-FileCopyrightText: 2022 Sawjan Gurung <saw.jan.grg3e@gmail.com>
+ * SPDX-FileCopyrightText: 2021-2022 Artur Neumann <artur@jankaritech.com>
+ * SPDX-License-Identifier: AGPL-3.0-or-later
+ */
+
 define('PHPUNIT_RUN', 1);
 use Composer\Autoload\ClassLoader;
 

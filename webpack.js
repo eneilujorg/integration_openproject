@@ -1,3 +1,10 @@
+/**
+ * SPDX-FileCopyrightText: 2021-2023 Nextcloud GmbH and Nextcloud contributors
+ * SPDX-FileCopyrightText: 2023 Sagar Gurung <sagargurung1001@gmail.com>
+ * SPDX-FileCopyrightText: 2021-2022 Kiran Parajuli <kiranparajuli589@gmail.com>
+ * SPDX-License-Identifier: AGPL-3.0-or-later
+ */
+
 const path = require('path')
 const webpackConfig = require('@nextcloud/webpack-vue-config')
 const ESLintPlugin = require('eslint-webpack-plugin')
