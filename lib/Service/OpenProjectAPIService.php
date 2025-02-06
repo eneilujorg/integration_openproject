@@ -70,7 +70,7 @@ define('CACHE_TTL', 3600);
 class OpenProjectAPIService {
 	public const AUTH_METHOD_OAUTH = 'oauth2';
 	public const AUTH_METHOD_OIDC = 'oidc';
-	public const MINIMUM_VERSION_OIDC = 'v6.2.0';
+	public const MIN_SUPPORTED_OIDC_APP_VERSION = 'v6.2.0';
 	/**
 	 * @var string
 	 */

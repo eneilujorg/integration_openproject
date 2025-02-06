@@ -86,7 +86,7 @@
 							{{ authMethodsLabel.OIDC }}
 						</NcCheckboxRadioSwitch>
 						<p v-if="!isOIDCAppInstalledAndEnabled" class="oidc-app-check-description" v-html="getOIDCAppNotInstalledHintText" /> <!-- eslint-disable-line vue/no-v-html -->
-						<p v-if="isOIDCAppInstalledAndEnabled && !isOIDCAppSupported" class="error" v-html="getOIDCAppNotSupported" /> <!-- eslint-disable-line vue/no-v-html -->
+						<ErrorLabel v-if="isOIDCAppInstalledAndEnabled && !isOIDCAppSupported" :error="errorMessages.userOidcVersionUnsupported" />
 					</div>
 				</div>
 				<div v-else>
@@ -530,6 +530,8 @@ import SettingsTitle from '../components/settings/SettingsTitle.vue'
 import { F_MODES, FORM, USER_SETTINGS, AUTH_METHOD, AUTH_METHOD_LABEL } from '../utils.js'
 import TermsOfServiceUnsigned from './admin/TermsOfServiceUnsigned.vue'
 import dompurify from 'dompurify'
+import { error as errorMessages } from '../constants/messages.js'
+import ErrorLabel from './ErrorLabel.vue'
 export default {
 	name: 'AdminSettings',
 	components: {
@@ -548,6 +550,7 @@ export default {
 		NcCheckboxRadioSwitch,
 		TermsOfServiceUnsigned,
 		NcNoteCard,
+		ErrorLabel,
 	},
 	data() {
 		return {
@@ -614,6 +617,7 @@ export default {
 				currentTargetedAudienceClientIdSelected: null,
 			},
 			registeredOidcProviders: [],
+			errorMessages,
 		}
 	},
 	computed: {
@@ -766,10 +770,6 @@ export default {
 			const htmlLink = `<a class="link" href="${url}" target="_blank" title="${linkText}">${linkText}</a>`
 			return t('integration_openproject', 'Please install the {htmlLink} app to be able to use Keycloak for authorization with OpenProject.', { htmlLink }, null, { escape: false, sanitize: false })
 		},
-		getOIDCAppNotSupported() {
-			const version = this.getMinimumOidcversion
-			return t('integration_openproject', 'Not an unsupported userOIDC need to be minimum {version}', { version })
-		},
 		getConfigureOIDCHintText() {
 			const linkText = t('integration_openproject', 'User OIDC app')
 			const htmlLink = `<a class="link" href="" target="_blank" title="${linkText}">${linkText}</a>`
@@ -833,14 +833,11 @@ export default {
 			return this.state.authorization_settings.targeted_audience_client_id
 		},
 		isOIDCAppInstalledAndEnabled() {
-			return this.state.user_oidc_info.user_oidc_enabled
+			return this.state.user_oidc_enabled
 		},
 		isOIDCAppSupported() {
-			return this.state.user_oidc_info.user_oidc_supported
+			return this.state.user_oidc_supported
 		},
-		getMinimumOidcversion() {
-			return this.state.user_oidc_info.minimum_version_Oidc
-		}
 	},
 	created() {
 		this.init()
