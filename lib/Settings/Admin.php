@@ -87,7 +87,8 @@ class Admin implements ISettings {
 			'oidc_provider' => $this->openProjectAPIService->getRegisteredOidcProviders(),
 			'user_oidc_info' => [
 				'user_oidc_enabled' => $this->openProjectAPIService->isUserOIDCAppInstalledAndEnabled(),
-				'user_oidc_supported' => $this->openProjectAPIService->isUserOIDCAppSupported()
+				'user_oidc_supported' => $this->openProjectAPIService->isUserOIDCAppSupported(),
+				'minimum_version_Oidc' => OpenProjectAPIService::MINIMUM_VERSION_OIDC
 			],
 		];
 

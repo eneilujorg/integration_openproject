@@ -86,7 +86,7 @@
 							{{ authMethodsLabel.OIDC }}
 						</NcCheckboxRadioSwitch>
 						<p v-if="!isOIDCAppInstalledAndEnabled" class="oidc-app-check-description" v-html="getOIDCAppNotInstalledHintText" /> <!-- eslint-disable-line vue/no-v-html -->
-						<p v-if="isOIDCAppInstalledAndEnabled && !isOIDCAppSupported" class="oidc-app-check-description" v-html="getOIDCAppNotSupported" /> <!-- eslint-disable-line vue/no-v-html -->
+						<p v-if="isOIDCAppInstalledAndEnabled && !isOIDCAppSupported" class="error" v-html="getOIDCAppNotSupported" /> <!-- eslint-disable-line vue/no-v-html -->
 					</div>
 				</div>
 				<div v-else>
@@ -767,7 +767,8 @@ export default {
 			return t('integration_openproject', 'Please install the {htmlLink} app to be able to use Keycloak for authorization with OpenProject.', { htmlLink }, null, { escape: false, sanitize: false })
 		},
 		getOIDCAppNotSupported() {
-			return t('integration_openproject', 'Not an unsupported userOIDC need to br minimum v6.2.0')
+			const version = this.getMinimumOidcversion
+			return t('integration_openproject', 'Not an unsupported userOIDC need to be minimum {version}', { version })
 		},
 		getConfigureOIDCHintText() {
 			const linkText = t('integration_openproject', 'User OIDC app')
@@ -837,6 +838,9 @@ export default {
 		isOIDCAppSupported() {
 			return this.state.user_oidc_info.user_oidc_supported
 		},
+		getMinimumOidcversion() {
+			return this.state.user_oidc_info.minimum_version_Oidc
+		}
 	},
 	created() {
 		this.init()
