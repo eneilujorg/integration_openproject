@@ -85,7 +85,10 @@ class Admin implements ISettings {
 				'encryption_enabled_for_groupfolders' => $this->config->getAppValue('groupfolders', 'enable_encryption', '') === 'true'
 			],
 			'oidc_provider' => $this->openProjectAPIService->getRegisteredOidcProviders(),
-			'user_oidc_enabled' => $this->openProjectAPIService->isUserOIDCAppInstalledAndEnabled()
+			'user_oidc_info' => [
+				'user_oidc_enabled' => $this->openProjectAPIService->isUserOIDCAppInstalledAndEnabled(),
+				'user_oidc_supported' => $this->openProjectAPIService->isUserOIDCAppSupported()
+			],
 		];
 
 		$this->initialStateService->provideInitialState('admin-config', $adminConfig);

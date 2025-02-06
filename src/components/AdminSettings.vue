@@ -81,11 +81,12 @@
 						<NcCheckboxRadioSwitch class="radio-check"
 							:checked.sync="authorizationMethod.authorizationMethodSet"
 							:value="authMethods.OIDC"
-							:disabled="!isOIDCAppInstalledAndEnabled"
+							:disabled="!isOIDCAppInstalledAndEnabled || !isOIDCAppSupported"
 							type="radio">
 							{{ authMethodsLabel.OIDC }}
 						</NcCheckboxRadioSwitch>
 						<p v-if="!isOIDCAppInstalledAndEnabled" class="oidc-app-check-description" v-html="getOIDCAppNotInstalledHintText" /> <!-- eslint-disable-line vue/no-v-html -->
+						<p v-if="isOIDCAppInstalledAndEnabled && !isOIDCAppSupported" class="oidc-app-check-description" v-html="getOIDCAppNotSupported" /> <!-- eslint-disable-line vue/no-v-html -->
 					</div>
 				</div>
 				<div v-else>
@@ -765,6 +766,9 @@ export default {
 			const htmlLink = `<a class="link" href="${url}" target="_blank" title="${linkText}">${linkText}</a>`
 			return t('integration_openproject', 'Please install the {htmlLink} app to be able to use Keycloak for authorization with OpenProject.', { htmlLink }, null, { escape: false, sanitize: false })
 		},
+		getOIDCAppNotSupported() {
+			return t('integration_openproject', 'Not an unsupported userOIDC need to br minimum v6.2.0')
+		},
 		getConfigureOIDCHintText() {
 			const linkText = t('integration_openproject', 'User OIDC app')
 			const htmlLink = `<a class="link" href="" target="_blank" title="${linkText}">${linkText}</a>`
@@ -828,7 +832,10 @@ export default {
 			return this.state.authorization_settings.targeted_audience_client_id
 		},
 		isOIDCAppInstalledAndEnabled() {
-			return this.state.user_oidc_enabled
+			return this.state.user_oidc_info.user_oidc_enabled
+		},
+		isOIDCAppSupported() {
+			return this.state.user_oidc_info.user_oidc_supported
 		},
 	},
 	created() {

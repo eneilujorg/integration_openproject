@@ -1683,12 +1683,18 @@ class OpenProjectAPIService {
 
 	public function isUserOIDCAppInstalledAndEnabled(): bool {
 		return (
-			class_exists('\OCA\UserOIDC\Db\ProviderMapper') &&
-			class_exists('\OCA\UserOIDC\Event\ExchangedTokenRequestedEvent') &&
-			class_exists('\OCA\UserOIDC\Exception\TokenExchangeFailedException') &&
 			$this->appManager->isInstalled(
 				'user_oidc',
 			)
+		);
+	}
+
+	public function isUserOIDCAppSupported(): bool {
+		return (
+			class_exists('\OCA\UserOIDC\Db\ProviderMapper') &&
+			class_exists('\OCA\UserOIDC\Event\ExchangedTokenRequestedEvent') &&
+			class_exists('\OCA\UserOIDC\Exception\TokenExchangeFailedException') &&
+			class_exists('\OCA\UserOIDC\User\Backend')
 		);
 	}
 
