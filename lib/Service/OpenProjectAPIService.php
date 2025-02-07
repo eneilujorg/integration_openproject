@@ -70,7 +70,7 @@ define('CACHE_TTL', 3600);
 class OpenProjectAPIService {
 	public const AUTH_METHOD_OAUTH = 'oauth2';
 	public const AUTH_METHOD_OIDC = 'oidc';
-	public const MIN_SUPPORTED_OIDC_APP_VERSION = 'v6.2.0';
+	public const MIN_SUPPORTED_OIDC_APP_VERSION = '6.2.0';
 	/**
 	 * @var string
 	 */
@@ -1683,19 +1683,18 @@ class OpenProjectAPIService {
 	}
 
 	public function isUserOIDCAppInstalledAndEnabled(): bool {
-		return (
-			$this->appManager->isInstalled(
-				'user_oidc',
-			)
-		);
+		return $this->appManager->isInstalled('user_oidc');
 	}
 
 	public function isUserOIDCAppSupported(): bool {
+		$userOidcVersion = $this->appManager->getAppVersion('user_oidc');
 		return (
+			$this->isUserOIDCAppInstalledAndEnabled() &&
 			class_exists('\OCA\UserOIDC\Db\ProviderMapper') &&
 			class_exists('\OCA\UserOIDC\Event\ExchangedTokenRequestedEvent') &&
 			class_exists('\OCA\UserOIDC\Exception\TokenExchangeFailedException') &&
-			class_exists('\OCA\UserOIDC\User\Backend')
+			class_exists('\OCA\UserOIDC\User\Backend') &&
+			version_compare($userOidcVersion, self::MIN_SUPPORTED_OIDC_APP_VERSION) >= 0
 		);
 	}
 

@@ -81,12 +81,12 @@
 						<NcCheckboxRadioSwitch class="radio-check"
 							:checked.sync="authorizationMethod.authorizationMethodSet"
 							:value="authMethods.OIDC"
-							:disabled="!isOIDCAppInstalledAndEnabled || !isOIDCAppSupported"
+							:disabled="!isOIDCAppInstalledAndEnabled || !state.user_oidc_supported"
 							type="radio">
 							{{ authMethodsLabel.OIDC }}
 						</NcCheckboxRadioSwitch>
 						<p v-if="!isOIDCAppInstalledAndEnabled" class="oidc-app-check-description" v-html="getOIDCAppNotInstalledHintText" /> <!-- eslint-disable-line vue/no-v-html -->
-						<ErrorLabel v-if="isOIDCAppInstalledAndEnabled && !isOIDCAppSupported" :error="errorMessages.userOidcVersionUnsupported" />
+						<ErrorLabel v-if="isOIDCAppInstalledAndEnabled && !state.user_oidc_supported" :error="errorMessages.userOidcVersionUnsupported" />
 					</div>
 				</div>
 				<div v-else>
@@ -834,9 +834,6 @@ export default {
 		},
 		isOIDCAppInstalledAndEnabled() {
 			return this.state.user_oidc_enabled
-		},
-		isOIDCAppSupported() {
-			return this.state.user_oidc_supported
 		},
 	},
 	created() {
