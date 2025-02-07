@@ -55,7 +55,7 @@
 import { loadState } from '@nextcloud/initial-state'
 import debounce from 'lodash/debounce.js'
 import axios from '@nextcloud/axios'
-import { generateUrl } from '@nextcloud/router'
+import { generateOcsUrl } from '@nextcloud/router'
 import { NcSelect, NcButton } from '@nextcloud/vue'
 import WorkPackage from './WorkPackage.vue'
 import { showError, showSuccess } from '@nextcloud/dialogs'
@@ -250,7 +250,7 @@ export default {
 		},
 		async makeSearchRequest(search, fileId) {
 			this.state = STATE.LOADING
-			const url = generateUrl('/apps/integration_openproject/work-packages')
+			const url = generateOcsUrl('/apps/integration_openproject/api/v1/work-packages')
 			const isSmartPicker = this.isSmartPicker
 			const req = {}
 			req.params = {
@@ -265,7 +265,7 @@ export default {
 			}
 			this.checkForErrorCode(response.status)
 			if (response.status === 200) {
-				await this.processWorkPackages(response.data, fileId)
+				await this.processWorkPackages(response.data.ocs.data, fileId)
 			}
 			if (this.isStateLoading) {
 				this.state = STATE.OK
