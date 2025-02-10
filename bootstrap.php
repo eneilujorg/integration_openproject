@@ -1,5 +1,10 @@
 <?php
 
+/**
+ * SPDX-FileCopyrightText: 2021-2022 Jankari Tech Pvt. Ltd.
+ * SPDX-License-Identifier: AGPL-3.0-or-later
+ */
+
 define('PHPUNIT_RUN', 1);
 use Composer\Autoload\ClassLoader;
 

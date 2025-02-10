@@ -25,7 +25,7 @@
     "openproject"
   ],
   "author": "Julien Veyssier",
-  "license": "AGPL-3.0",
+  "license": "AGPL-3.0-or-later",
   "bugs": {
     "url": "https://github.com/nextcloud/integration_openproject/issues"
   },

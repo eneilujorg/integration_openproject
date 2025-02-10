@@ -1,0 +1,36 @@
+# SPDX-FileCopyrightText: 2025 Nextcloud GmbH and Nextcloud contributors
+# SPDX-License-Identifier: AGPL-3.0-or-later
+version = 1
+SPDX-PackageName = "integration_openproject"
+SPDX-PackageSupplier = "Nextcloud <info@nextcloud.com>"
+SPDX-PackageDownloadLocation = "https://github.com/nextcloud/integration_openproject"
+
+[[annotations]]
+path = [".tx/config"]
+precedence = "aggregate"
+SPDX-FileCopyrightText = "2021 Nextcloud GmbH and Nextcloud contributors"
+SPDX-License-Identifier = "AGPL-3.0-or-later"
+
+[[annotations]]
+path = [".tx/backport"]
+precedence = "aggregate"
+SPDX-FileCopyrightText = "2022-2024 Jankari Tech Pvt. Ltd."
+SPDX-License-Identifier = "AGPL-3.0-or-later"
+
+[[annotations]]
+path = ["composer.json", "composer.lock"]
+precedence = "aggregate"
+SPDX-FileCopyrightText = "2022-2025 Jankari Tech Pvt. Ltd., 2022 Nextcloud GmbH and Nextcloud contributors"
+SPDX-License-Identifier = "AGPL-3.0-or-later"
+
+[[annotations]]
+path = ["img/app.svg", "img/app-dark.svg"]
+precedence = "aggregate"
+SPDX-FileCopyrightText = "2018-2024 Google LLC"
+SPDX-License-Identifier = "LicenseRef-OpenProjectTrademarks"
+
+[[annotations]]
+path = ["img/bell-ring.svg", "img/bell-ring-dark.svg"]
+precedence = "aggregate"
+SPDX-FileCopyrightText = "2012-2024 OpenProject GmbH"
+SPDX-License-Identifier = "Apache-2.0"
