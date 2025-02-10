@@ -49,7 +49,7 @@ import SearchInput from '../components/tab/SearchInput.vue'
 import EmptyContent from '../components/tab/EmptyContent.vue'
 import { AUTH_METHOD, STATE } from '../utils.js'
 import { loadState } from '@nextcloud/initial-state'
-import { generateUrl } from '@nextcloud/router'
+import { generateOcsUrl } from '@nextcloud/router'
 import axios from '@nextcloud/axios'
 import { NcLoadingIcon } from '@nextcloud/vue'
 
@@ -109,12 +109,12 @@ export default {
 				this.state = STATE.ERROR
 				return
 			}
-			const configurationUrl = generateUrl('/apps/integration_openproject/configuration')
+			const configurationUrl = generateOcsUrl('/apps/integration_openproject/api/v1/configuration')
 			let response = null
 			try {
 				// send an axios request to fetch configuration to see if the connection is there
 				response = await axios.get(configurationUrl)
-				if (response.data) {
+				if (response.data.ocs.data) {
 					this.state = STATE.OK
 					if (this.$refs.linkPicker?.$refs?.workPackageSelect) {
 						this.$nextTick(() => {

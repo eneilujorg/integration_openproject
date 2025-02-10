@@ -155,7 +155,7 @@
 </template>
 <script>
 import { NcModal, NcSelect, NcButton, NcTextField } from '@nextcloud/vue'
-import { generateUrl } from '@nextcloud/router'
+import { generateOcsUrl } from '@nextcloud/router'
 import axios from '@nextcloud/axios'
 import dompurify from 'dompurify'
 import { loadState } from '@nextcloud/initial-state'
@@ -409,10 +409,10 @@ export default {
 					searchQuery,
 				}
 			}
-			const url = generateUrl('/apps/integration_openproject/projects')
+			const url = generateOcsUrl('/apps/integration_openproject/api/v1/projects')
 			try {
 				const response = await axios.get(url, req)
-				await this.processProjects(response.data)
+				await this.processProjects(response.data.ocs.data)
 			} catch (e) {
 				console.error('Couldn\'t fetch openproject projects')
 			}
@@ -509,13 +509,14 @@ export default {
 		},
 		async validateWorkPackageForm(id, setAllowedType = false, setAllowedStatus = false) {
 			this.checkIfTheDescriptionTemplateIsChanged()
-			const url = generateUrl(`/apps/integration_openproject/projects/${id}/work-packages/form`)
+			const url = generateOcsUrl(`/apps/integration_openproject/api/v1/projects/${id}/work-packages/form`)
 			const body = this.getBodyForRequest
 			const previousProjectType = this.type.label
 			const previousProjectStatus = this.status.label
 			this.previousProjectId = id
 			try {
 				const response = await axios.post(url, body)
+				const responseData = response.data.ocs.data
 				if (setAllowedType && setAllowedStatus) {
 					// when project is changed set all the values to default and
 					// set new allowed values for types, status, assignee to display as the option in dropdown
@@ -524,24 +525,24 @@ export default {
 					this.setToDefaultProjectAssignee()
 					this.allowedTypes = []
 					this.allowedStatues = []
-					this.allowedTypes.push(...this.setAllowedValues(response.data.schema.type._embedded.allowedValues))
-					this.allowedStatues.push(...this.setAllowedValues(response.data.schema.status._embedded.allowedValues))
+					this.allowedTypes.push(...this.setAllowedValues(responseData.schema.type._embedded.allowedValues))
+					this.allowedStatues.push(...this.setAllowedValues(responseData.schema.status._embedded.allowedValues))
 					await this.setAvailableAssigneesForProject(id)
 					this.type.label = (this.isTypeOrStatusAlreadyInAllowedList(previousProjectType, this.allowedTypes))
-						? response.data.payload._links.type.title
+						? responseData.payload._links.type.title
 						: ''
-					this.status.label = response.data.payload._links.status.title
+					this.status.label = responseData.payload._links.status.title
 				} else if (setAllowedStatus) {
 					// when only type changes then reset status only
 					this.setDefaultProjectStatus()
 					this.allowedStatues = []
-					this.allowedStatues.push(...this.setAllowedValues(response.data.schema.status._embedded.allowedValues))
+					this.allowedStatues.push(...this.setAllowedValues(responseData.schema.status._embedded.allowedValues))
 					this.status.label = (this.isTypeOrStatusAlreadyInAllowedList(previousProjectStatus, this.allowedStatues))
-						? response.data.payload._links.status.title
+						? responseData.payload._links.status.title
 						: ''
 				}
-				if (response.data.validationErrors) {
-					const validationErrors = response.data.validationErrors
+				if (responseData.validationErrors) {
+					const validationErrors = responseData.validationErrors
 					for (const errors in validationErrors) {
 						if (errors.startsWith('customField')) {
 							this.customTypeError = true
@@ -554,11 +555,11 @@ export default {
 						}
 					}
 				}
-				this.type.self = response.data.payload._links.type
-				this.status.self = response.data.payload._links.status
-				this.subject = response.data.payload.subject
+				this.type.self = responseData.payload._links.type
+				this.status.self = responseData.payload._links.status
+				this.subject = responseData.payload.subject
 				if (this.isDescriptionTemplateChanged === false) {
-					this.description = response.data.payload.description
+					this.description = responseData.payload.description
 					this.previousDescriptionTemplate = this.description.raw
 				}
 			} catch (e) {
@@ -579,13 +580,13 @@ export default {
 		async setAvailableAssigneesForProject(projectId) {
 			this.availableAssignees = []
 			let response
-			const url = generateUrl(`/apps/integration_openproject/projects/${projectId}/available-assignees`)
+			const url = generateOcsUrl(`/apps/integration_openproject/api/v1/projects/${projectId}/available-assignees`)
 			try {
 				response = await axios.get(url)
 			} catch (e) {
 				console.error('Cannot fetch available assignees')
 			}
-			const assignees = response.data
+			const assignees = response.data.ocs.data
 			for (const index in assignees) {
 				const assignee = {}
 				assignee.self = assignees[index]._links.self
@@ -595,8 +596,7 @@ export default {
 			}
 		},
 		async createWorkpackage() {
-
-			const url = generateUrl('/apps/integration_openproject/create/work-packages')
+			const url = generateOcsUrl('/apps/integration_openproject/api/v1/create/work-packages')
 			const payload = this.getBodyForRequest
 			payload.body.description = this.description
 			let response = null
@@ -619,12 +619,12 @@ export default {
 			}
 			if (response.status === 201) {
 				eventData.openProjectEventName = 'work_package_creation_success'
-				eventData.openProjectEventPayload = response.data
+				eventData.openProjectEventPayload = response.data.ocs.data
 				this.$emit('create-work-package', eventData)
 				this.resetData()
 			} else {
 				if (response.status === 422) {
-					const error = JSON.parse(response.data)
+					const error = JSON.parse(response.data.ocs.data)
 					let attribute = null
 					let message = null
 					const multipleErrors = {}

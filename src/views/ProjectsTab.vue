@@ -72,7 +72,7 @@ import LinkOffIcon from 'vue-material-design-icons/LinkOff.vue'
 
 import axios from '@nextcloud/axios'
 
-import { generateUrl } from '@nextcloud/router'
+import { generateOcsUrl } from '@nextcloud/router'
 import { showSuccess, showError } from '@nextcloud/dialogs'
 import { translate as t } from '@nextcloud/l10n'
 import { loadState } from '@nextcloud/initial-state'
@@ -207,13 +207,13 @@ export default {
 		async unlinkWorkPackage(workpackageId, fileId) {
 			let response
 			try {
-				response = await axios.get(generateUrl(`/apps/integration_openproject/work-packages/${workpackageId}/file-links`))
+				response = await axios.get(generateOcsUrl(`/apps/integration_openproject/api/v1/work-packages/${workpackageId}/file-links`))
 			} catch (e) {
 				response = e.response
 			}
 			if (response.status === 200) {
-				const id = this.processLink(response.data, fileId)
-				const url = generateUrl('/apps/integration_openproject/file-links/' + id)
+				const id = this.processLink(response.data.ocs.data, fileId)
+				const url = generateOcsUrl('/apps/integration_openproject/api/v1/file-links/' + id)
 				response = await axios.delete(url)
 			} else {
 				this.checkForErrorCode(response.status)
@@ -238,15 +238,16 @@ export default {
 		},
 		async fetchWorkpackages(fileId) {
 			const req = {}
-			const url = generateUrl('/apps/integration_openproject/work-packages?fileId=' + fileId)
+			const url = generateOcsUrl('/apps/integration_openproject/api/v1/work-packages?fileId=' + fileId)
 			try {
 				const response = await axios.get(url, req)
-				if (!Array.isArray(response.data)) {
+				const responseData = response.data.ocs.data
+				if (!Array.isArray(responseData)) {
 					this.state = STATE.FAILED_FETCHING_WORKPACKAGES
 				} else {
 					// empty data means there are no workpackages linked
-					if (response.data.length > 0) {
-						for (let workPackage of response.data) {
+					if (responseData.length > 0) {
+						for (let workPackage of responseData) {
 							if (fileId !== this.fileInfo.id) {
 								break
 							}

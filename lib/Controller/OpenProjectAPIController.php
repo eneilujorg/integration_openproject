@@ -13,78 +13,37 @@
 namespace OCA\OpenProject\Controller;
 
 use Exception;
-use GuzzleHttp\Exception\ClientException;
-use GuzzleHttp\Exception\ConnectException;
-use GuzzleHttp\Exception\RequestException;
-use GuzzleHttp\Exception\ServerException;
 use InvalidArgumentException;
 use OCA\OpenProject\AppInfo\Application;
 use OCA\OpenProject\Exception\OpenprojectErrorException;
 use OCA\OpenProject\Service\OpenProjectAPIService;
-use OCP\AppFramework\Controller;
 use OCP\AppFramework\Http;
+use OCP\AppFramework\Http\Attribute\NoAdminRequired;
+use OCP\AppFramework\Http\Attribute\NoCSRFRequired;
 use OCP\AppFramework\Http\DataDisplayResponse;
 use OCP\AppFramework\Http\DataDownloadResponse;
 use OCP\AppFramework\Http\DataResponse;
+use OCP\AppFramework\OCSController;
 use OCP\Files\NotFoundException;
 use OCP\Files\NotPermittedException;
-use OCP\Http\Client\LocalServerException;
 
 use OCP\IConfig;
 use OCP\IRequest;
-use OCP\IURLGenerator;
-use Psr\Log\LoggerInterface;
 
-class OpenProjectAPIController extends Controller {
+class OpenProjectAPIController extends OCSController {
 
-	/**
-	 * @var OpenProjectAPIService
-	 */
-	private $openprojectAPIService;
-	/**
-	 * @var string|null
-	 */
-	private $userId;
-	/**
-	 * @var string
-	 */
-	private $accessToken;
-
-	/**
-	 * @var string
-	 */
-	private $openprojectUrl;
-
-	/**
-	 * @var IConfig
-	 */
-	private $config;
-
-	/**
-	 * @var IURLGenerator
-	 */
-	private $urlGenerator;
-
-	/**
-	 * @var LoggerInterface
-	 */
-	private $logger;
+	private string $accessToken;
+	private string $openprojectUrl;
 
 	public function __construct(string $appName,
 		IRequest $request,
-		IConfig $config,
-		OpenProjectAPIService $openprojectAPIService,
-		IURLGenerator $urlGenerator,
-		LoggerInterface $logger,
-		?string $userId) {
+		private IConfig $config,
+		private OpenProjectAPIService $openprojectAPIService,
+		private ?string $userId,
+	) {
 		parent::__construct($appName, $request);
-		$this->openprojectAPIService = $openprojectAPIService;
-		$this->userId = $userId;
 		$this->accessToken = $config->getUserValue($userId, Application::APP_ID, 'token');
 		$this->openprojectUrl = $config->getAppValue(Application::APP_ID, 'openproject_instance_url');
-		$this->config = $config;
-		$this->urlGenerator = $urlGenerator;
-		$this->logger = $logger;
 	}
 
 	private function validatePreRequestConditions(): array {
@@ -112,17 +71,15 @@ class OpenProjectAPIController extends Controller {
 
 	/**
 	 * get openproject instance URL
-	 * @NoAdminRequired
 	 *
 	 * @return DataResponse
 	 */
+	#[NoAdminRequired]
 	public function getOpenProjectUrl(): DataResponse {
 		return new DataResponse($this->openprojectUrl);
 	}
 	/**
 	 * get openproject user avatar
-	 * @NoAdminRequired
-	 * @NoCSRFRequired
 	 *
 	 * @param string $userId
 	 * @param string $userName
@@ -131,6 +88,8 @@ class OpenProjectAPIController extends Controller {
 	 * @throws \OCP\Files\NotPermittedException
 	 * @throws \OCP\Lock\LockedException
 	 */
+	#[NoAdminRequired]
+	#[NoCsrfRequired]
 	public function getOpenProjectAvatar(string $userId = '', string $userName = '') {
 		$result = $this->openprojectAPIService->getOpenProjectAvatar(
 			$userId, $userName, $this->userId
@@ -144,10 +103,10 @@ class OpenProjectAPIController extends Controller {
 
 	/**
 	 * get notifications list
-	 * @NoAdminRequired
 	 *
 	 * @return DataResponse
 	 */
+	#[NoAdminRequired]
 	public function getNotifications(): DataResponse {
 		$validatePreRequestResult = $this->validatePreRequestConditions();
 		if (!$validatePreRequestResult['status']) {
@@ -170,13 +129,12 @@ class OpenProjectAPIController extends Controller {
 	/**
 	 * get searched work packages
 	 *
-	 * @NoAdminRequired
-	 *
 	 * @param ?string $searchQuery
 	 * @param ?int $fileId
 	 * @param bool $isSmartPicker
 	 * @return DataResponse
 	 */
+	#[NoAdminRequired]
 	public function getSearchedWorkPackages(
 		?string $searchQuery = null,
 		?int $fileId = null,
@@ -208,8 +166,6 @@ class OpenProjectAPIController extends Controller {
 	}
 
 	/**
-	 * @NoAdminRequired
-	 *
 	 * @param array<mixed> $values An array containing the following keys:
 	 *        - "workpackageId" (int): The ID of the work package.
 	 *        - "fileinfo" (array):  An array of file information with the following keys:
@@ -218,6 +174,7 @@ class OpenProjectAPIController extends Controller {
 	 *
 	 * @return DataResponse
 	 */
+	#[NoAdminRequired]
 	public function linkWorkPackageToFile(array $values): DataResponse {
 		$validatePreRequestResult = $this->validatePreRequestConditions();
 		if (!$validatePreRequestResult['status']) {
@@ -241,10 +198,10 @@ class OpenProjectAPIController extends Controller {
 	}
 
 	/**
-	 * @NoAdminRequired
 	 * @param int $workpackageId
 	 * @return DataResponse
 	 */
+	#[NoAdminRequired]
 	public function markNotificationAsRead(int $workpackageId) {
 		$validatePreRequestResult = $this->validatePreRequestConditions();
 		if (!$validatePreRequestResult['status']) {
@@ -270,10 +227,10 @@ class OpenProjectAPIController extends Controller {
 	}
 
 	/**
-	 * @NoAdminRequired
 	 * @param int $id
 	 * @return DataResponse
 	 */
+	#[NoAdminRequired]
 	public function getWorkPackageFileLinks(int $id): DataResponse {
 		$validatePreRequestResult = $this->validatePreRequestConditions();
 		if (!$validatePreRequestResult['status']) {
@@ -295,10 +252,10 @@ class OpenProjectAPIController extends Controller {
 	}
 
 	/**
-	 * @NoAdminRequired
 	 * @param int $id
 	 * @return DataResponse
 	 */
+	#[NoAdminRequired]
 	public function deleteFileLink(int $id): DataResponse {
 		$validatePreRequestResult = $this->validatePreRequestConditions();
 		if (!$validatePreRequestResult['status']) {
@@ -322,12 +279,11 @@ class OpenProjectAPIController extends Controller {
 	/**
 	 * get status of work packages
 	 *
-	 * @NoAdminRequired
-	 *
 	 * @param string $id
 	 *
 	 * @return DataResponse
 	 */
+	#[NoAdminRequired]
 	public function getOpenProjectWorkPackageStatus(string $id): DataResponse {
 		$validatePreRequestResult = $this->validatePreRequestConditions();
 		if (!$validatePreRequestResult['status']) {
@@ -347,12 +303,11 @@ class OpenProjectAPIController extends Controller {
 	/**
 	 * get type work packages
 	 *
-	 * @NoAdminRequired
-	 *
 	 * @param string $id
 	 *
 	 * @return DataResponse
 	 */
+	#[NoAdminRequired]
 	public function getOpenProjectWorkPackageType(string $id): DataResponse {
 		$validatePreRequestResult = $this->validatePreRequestConditions();
 		if (!$validatePreRequestResult['status']) {
@@ -370,10 +325,10 @@ class OpenProjectAPIController extends Controller {
 	}
 
 	/**
-	 * @NoAdminRequired
 	 * @param string|null $searchQuery
 	 * @return DataResponse
 	 */
+	#[NoAdminRequired]
 	public function getAvailableOpenProjectProjects(?string $searchQuery = null): DataResponse {
 		$validatePreRequestResult = $this->validatePreRequestConditions();
 		if (!$validatePreRequestResult['status']) {
@@ -391,8 +346,6 @@ class OpenProjectAPIController extends Controller {
 
 
 	/**
-	 * @NoAdminRequired
-	 *
 	 * @param string $projectId
 	 * @param array<mixed> $body body is same in the format that OpenProject api expects the body to be i.e
 	 *                             {
@@ -425,6 +378,7 @@ class OpenProjectAPIController extends Controller {
 	 * 							 Note that this api will send `200` even with empty body and the body content is similar to that of create workpackages
 	 * @return DataResponse
 	 */
+	#[NoAdminRequired]
 	public function getOpenProjectWorkPackageForm(string $projectId, array $body): DataResponse {
 		$validatePreRequestResult = $this->validatePreRequestConditions();
 		if (!$validatePreRequestResult['status']) {
@@ -441,11 +395,10 @@ class OpenProjectAPIController extends Controller {
 	}
 
 	/**
-	 * @NoAdminRequired
-	 *
 	 * @param string $projectId
 	 * @return DataResponse
 	 */
+	#[NoAdminRequired]
 	public function getAvailableAssigneesOfAProject(string $projectId): DataResponse {
 		$validatePreRequestResult = $this->validatePreRequestConditions();
 		if (!$validatePreRequestResult['status']) {
@@ -462,8 +415,6 @@ class OpenProjectAPIController extends Controller {
 	}
 
 	/**
-	 * @NoAdminRequired
-	 *
 	 * @param array<mixed> $body body is same in the format that OpenProject api expects the body to be i.e
 	 *                            {
 	 * 								_links: {
@@ -494,6 +445,7 @@ class OpenProjectAPIController extends Controller {
 	 *                          See POST request for create work package https://www.openproject.org/docs/api/endpoints/work-packages/
 	 * @return DataResponse
 	 */
+	#[NoAdminRequired]
 	public function createWorkPackage(array $body): DataResponse {
 		$validatePreRequestResult = $this->validatePreRequestConditions();
 		if (!$validatePreRequestResult['status']) {
@@ -518,10 +470,9 @@ class OpenProjectAPIController extends Controller {
 	/**
 	 * get OpenProject configuration
 	 *
-	 * @NoAdminRequired
-	 *
 	 * @return DataResponse
 	 */
+	#[NoAdminRequired]
 	public function getOpenProjectConfiguration(): DataResponse {
 		$validatePreRequestResult = $this->validatePreRequestConditions();
 		if (!$validatePreRequestResult['status']) {
@@ -535,214 +486,5 @@ class OpenProjectAPIController extends Controller {
 			return new DataResponse($e->getMessage(), Http::STATUS_INTERNAL_SERVER_ERROR);
 		}
 		return new DataResponse($result);
-	}
-
-	/**
-	 * check if there is a OpenProject behind a certain URL
-	 *
-	 * @NoAdminRequired
-	 *
-	 * @param string $url
-	 *
-	 * @return DataResponse
-	 */
-	public function isValidOpenProjectInstance(string $url): DataResponse {
-		if ($this->openprojectAPIService::validateURL($url) !== true) {
-			$this->logger->error(
-				"The OpenProject URL '$url' is invalid",
-				['app' => $this->appName]
-			);
-			return new DataResponse(['result' => 'invalid']);
-		}
-		try {
-			$response = $this->openprojectAPIService->rawRequest(
-				'', $url, '', [], 'GET',
-				['allow_redirects' => false]
-			);
-			$statusCode = $response->getStatusCode();
-			if ($statusCode >= 300 && $statusCode <= 399) {
-				$newLocation = $response->getHeader('Location');
-				if ($newLocation !== '') {
-					return new DataResponse(
-						[
-							'result' => 'redirected',
-							'details' => str_replace('api/v3/', '', $newLocation)
-						]
-					);
-				}
-				$this->logger->error(
-					"Could not connect to the URL '$url'",
-					[
-						'app' => $this->appName,
-					]
-				);
-				return new DataResponse(
-					[
-						'result' => 'unexpected_error',
-						'details' => 'received a redirect status code (' . $statusCode . ') but no "Location" header'
-					]
-				);
-			}
-			$body = (string) $response->getBody();
-			$decodedBody = json_decode($body, true);
-			if (
-				$decodedBody &&
-				isset($decodedBody['_type']) &&
-				isset($decodedBody['instanceName']) &&
-				$decodedBody['_type'] === 'Root' &&
-				$decodedBody['instanceName'] !== ''
-			) {
-				return new DataResponse(['result' => true]);
-			}
-		} catch (ClientException $e) {
-			$response = $e->getResponse();
-			$body = (string) $response->getBody();
-			$decodedBody = json_decode($body, true);
-			if (
-				$decodedBody &&
-				isset($decodedBody['_type']) &&
-				isset($decodedBody['errorIdentifier']) &&
-				$decodedBody['_type'] === 'Error' &&
-				$decodedBody['errorIdentifier'] !== ''
-			) {
-				return new DataResponse(['result' => true]);
-			}
-			$this->logger->error(
-				"Could not connect to the OpenProject. " .
-				"There is no valid OpenProject instance at '$url'",
-				['app' => $this->appName, 'exception' => $e]
-			);
-			return new DataResponse(
-				[
-					'result' => 'client_exception',
-					'details' => $response->getStatusCode() . " " . $response->getReasonPhrase()
-				]
-			);
-		} catch (ServerException $e) {
-			$response = $e->getResponse();
-			$this->logger->error(
-				"Could not connect to the OpenProject URL '$url', " .
-				"The server replied with " . $response->getStatusCode() . " " . $response->getReasonPhrase(),
-				['app' => $this->appName, 'exception' => $e]
-			);
-			return new DataResponse(
-				[
-					'result' => 'server_exception',
-					'details' => $response->getStatusCode() . " " . $response->getReasonPhrase()
-				]
-			);
-		} catch (RequestException $e) {
-			$this->logger->error(
-				"Could not connect to the URL '$url'",
-				['app' => $this->appName, 'exception' => $e]
-			);
-			return new DataResponse(
-				[
-					'result' => 'request_exception',
-					'details' => $e->getMessage()
-				]
-			);
-		} catch (LocalServerException $e) {
-			$this->logger->error(
-				'Accessing OpenProject servers with local addresses is not allowed. ' .
-				'To be able to use an OpenProject server with a local address, ' .
-				'enable the `allow_local_remote_servers` setting.',
-				['app' => $this->appName, 'exception' => $e]
-			);
-			return new DataResponse(
-				[
-					'result' => 'local_remote_servers_not_allowed'
-				]
-			);
-		} catch (ConnectException $e) {
-			$this->logger->error(
-				"A network error occurred while trying to connect to the OpenProject URL '$url'",
-				['app' => $this->appName, 'exception' => $e]
-			);
-			return new DataResponse(
-				[
-					'result' => 'network_error',
-					'details' => $e->getMessage()
-				]
-			);
-		} catch (Exception $e) {
-			$this->logger->error(
-				"Could not connect to the URL '$url'",
-				['app' => $this->appName, 'exception' => $e]
-			);
-			return new DataResponse(
-				[
-					'result' => 'unexpected_error',
-					'details' => $e->getMessage()
-				]
-			);
-		}
-		$this->logger->error(
-			"Could not connect to the OpenProject. " .
-			"There is no valid OpenProject instance at '$url'",
-			['app' => $this->appName, 'data' => $body]
-		);
-		return new DataResponse(
-			[
-				'result' => 'not_valid_body',
-				'details' => $body
-			]
-		);
-	}
-
-	/**
-	 * @NoAdminRequired
-	 *
-	 * @return DataResponse
-	 */
-	public function getOpenProjectOauthURLWithStateAndPKCE(): DataResponse {
-		$url = $this->openprojectAPIService::getOpenProjectOauthURL(
-			$this->config, $this->urlGenerator
-		);
-		$oauthState = bin2hex(random_bytes(5));
-		$this->config->setUserValue(
-			$this->userId,
-			Application::APP_ID,
-			'oauth_state',
-			$oauthState
-		);
-		// this results in a random string of 192 char and after packing and encoding a 128 char verifier
-		$randomString = bin2hex(random_bytes(96));
-		$codeVerifier = $this->base64UrlEncode(pack('H*', $randomString));
-		$this->config->setUserValue(
-			$this->userId,
-			Application::APP_ID,
-			'code_verifier',
-			$codeVerifier
-		);
-		$hash = hash('sha256', $codeVerifier);
-		$codeChallenge = $this->base64UrlEncode(pack('H*', $hash));
-		$url = $url . '&state=' .$oauthState .
-				 '&code_challenge=' . $codeChallenge .
-				'&code_challenge_method=S256';
-
-		return new DataResponse($url);
-	}
-
-	private function base64UrlEncode(string $plainText): string {
-		$base64 = base64_encode($plainText);
-		$base64 = trim($base64, "=");
-		$base64url = strtr($base64, '+/', '-_');
-		return ($base64url);
-	}
-
-	/**
-	 * @NoCSRFRequired
-	 *
-	 * check if the project folder set up is already setup or not
-	 *
-	 * @return DataResponse
-	 */
-	public function getProjectFolderSetupStatus(): DataResponse {
-		return new DataResponse(
-			[
-				'result' => $this->openprojectAPIService->isProjectFoldersSetupComplete()
-			]
-		);
 	}
 }

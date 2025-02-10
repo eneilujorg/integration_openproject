@@ -70,7 +70,7 @@
 import { NcModal, NcLoadingIcon, NcButton, NcProgressBar } from '@nextcloud/vue'
 import SearchInput from '../components/tab/SearchInput.vue'
 import EmptyContent from '../components/tab/EmptyContent.vue'
-import { generateUrl } from '@nextcloud/router'
+import { generateOcsUrl } from '@nextcloud/router'
 import axios from '@nextcloud/axios'
 import { loadState } from '@nextcloud/initial-state'
 import AlertCircleOutline from 'vue-material-design-icons/AlertCircleOutline.vue'
@@ -189,14 +189,15 @@ export default {
 		async fetchWorkpackagesForSingleFileSelected(fileId) {
 			this.state = STATE.LOADING
 			const req = {}
-			const url = generateUrl('/apps/integration_openproject/work-packages?fileId=' + fileId)
+			const url = generateOcsUrl('/apps/integration_openproject/api/v1/work-packages?fileId=' + fileId)
 			try {
 				const response = await axios.get(url, req)
-				if (!Array.isArray(response.data)) {
+				const responseData = response.data.ocs.data
+				if (!Array.isArray(responseData)) {
 					this.state = STATE.FAILED_FETCHING_WORKPACKAGES
 				} else {
-					if (this.fileInfos.length === 1 && response.data.length > 0) {
-						for (let workPackage of response.data) {
+					if (this.fileInfos.length === 1 && responseData.length > 0) {
+						for (let workPackage of responseData) {
 							workPackage.fileId = fileId
 							workPackage = await workpackageHelper.getAdditionalMetaData(workPackage, true)
 							this.alreadyLinkedWorkPackage.push(workPackage)

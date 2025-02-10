@@ -10,6 +10,10 @@
  * @copyright Julien Veyssier 2021
  */
 
+$requirements = [
+	'apiVersion' => '(v1)',
+];
+
 return [
 	'routes' => [
 		['name' => 'config#oauthRedirect', 'url' => '/oauth-redirect', 'verb' => 'GET'],
@@ -30,27 +34,28 @@ return [
 		['name' => 'config#resetIntegration', 'url' => '/setup', 'verb' => 'DELETE'],
 		['name' => 'config#updateIntegration', 'url' => '/setup', 'verb' => 'PATCH'],
 
-		['name' => 'openProjectAPI#getNotifications', 'url' => '/notifications', 'verb' => 'GET'],
-		['name' => 'openProjectAPI#markNotificationAsRead', 'url' => '/work-packages/{workpackageId}/notifications', 'verb' => 'DELETE'],
-		['name' => 'openProjectAPI#getOpenProjectUrl', 'url' => '/url', 'verb' => 'GET'],
-		['name' => 'openProjectAPI#getOpenProjectAvatar', 'url' => '/avatar', 'verb' => 'GET'],
-		['name' => 'openProjectAPI#getSearchedWorkPackages', 'url' => '/work-packages', 'verb' => 'GET'],
-		['name' => 'openProjectAPI#linkWorkPackageToFile', 'url' => '/work-packages', 'verb' => 'POST'],
-		['name' => 'openProjectAPI#getWorkPackageFileLinks', 'url' => '/work-packages/{id}/file-links', 'verb' => 'GET'],
-		['name' => 'openProjectAPI#getOpenProjectWorkPackageStatus', 'url' => '/statuses/{id}', 'verb' => 'GET'],
-		['name' => 'openProjectAPI#getOpenProjectWorkPackageType', 'url' => '/types/{id}', 'verb' => 'GET'],
-		['name' => 'openProjectAPI#deleteFileLink', 'url' => '/file-links/{id}', 'verb' => 'DELETE'],
-		['name' => 'openProjectAPI#isValidOpenProjectInstance', 'url' => '/is-valid-op-instance', 'verb' => 'POST'],
-		['name' => 'openProjectAPI#getOpenProjectOauthURLWithStateAndPKCE', 'url' => '/op-oauth-url', 'verb' => 'GET'],
-		['name' => 'openProjectAPI#getProjectFolderSetupStatus', 'url' => '/project-folder-status', 'verb' => 'GET'],
-		['name' => 'openProjectAPI#getAvailableOpenProjectProjects', 'url' => '/projects','verb' => 'GET'],
-		['name' => 'openProjectAPI#getOpenProjectWorkPackageForm', 'url' => '/projects/{projectId}/work-packages/form','verb' => 'POST'],
-		['name' => 'openProjectAPI#getAvailableAssigneesOfAProject', 'url' => '/projects/{projectId}/available-assignees','verb' => 'GET'],
-		['name' => 'openProjectAPI#createWorkPackage', 'url' => '/create/work-packages','verb' => 'POST'],
-		['name' => 'openProjectAPI#getOpenProjectConfiguration', 'url' => '/configuration', 'verb' => 'GET'],
+		['name' => 'openProject#isValidOpenProjectInstance', 'url' => '/is-valid-op-instance', 'verb' => 'POST'],
+		['name' => 'openProject#getOpenProjectOauthURLWithStateAndPKCE', 'url' => '/op-oauth-url', 'verb' => 'GET'],
+		['name' => 'openProject#getProjectFolderSetupStatus', 'url' => '/project-folder-status', 'verb' => 'GET'],
 	],
 	'ocs' => [
 		['name' => 'files#getFileInfo', 'url' => '/fileinfo/{fileId}', 'verb' => 'GET'],
 		['name' => 'files#getFilesInfo', 'url' => '/filesinfo', 'verb' => 'POST'],
+
+		['name' => 'openProjectAPI#getNotifications', 'url' => '/api/{apiVersion}/notifications', 'verb' => 'GET', 'requirements' => $requirements],
+		['name' => 'openProjectAPI#markNotificationAsRead', 'url' => '/api/{apiVersion}/work-packages/{workpackageId}/notifications', 'verb' => 'DELETE', 'requirements' => $requirements],
+		['name' => 'openProjectAPI#getOpenProjectUrl', 'url' => '/api/{apiVersion}/url', 'verb' => 'GET', 'requirements' => $requirements],
+		['name' => 'openProjectAPI#getOpenProjectAvatar', 'url' => '/api/{apiVersion}/avatar', 'verb' => 'GET', 'requirements' => $requirements],
+		['name' => 'openProjectAPI#getSearchedWorkPackages', 'url' => '/api/{apiVersion}/work-packages', 'verb' => 'GET', 'requirements' => $requirements],
+		['name' => 'openProjectAPI#linkWorkPackageToFile', 'url' => '/api/{apiVersion}/work-packages', 'verb' => 'POST', 'requirements' => $requirements],
+		['name' => 'openProjectAPI#getWorkPackageFileLinks', 'url' => '/api/{apiVersion}/work-packages/{id}/file-links', 'verb' => 'GET', 'requirements' => $requirements],
+		['name' => 'openProjectAPI#getOpenProjectWorkPackageStatus', 'url' => '/api/{apiVersion}/statuses/{id}', 'verb' => 'GET', 'requirements' => $requirements],
+		['name' => 'openProjectAPI#getOpenProjectWorkPackageType', 'url' => '/api/{apiVersion}/types/{id}', 'verb' => 'GET', 'requirements' => $requirements],
+		['name' => 'openProjectAPI#deleteFileLink', 'url' => '/api/{apiVersion}/file-links/{id}', 'verb' => 'DELETE', 'requirements' => $requirements],
+		['name' => 'openProjectAPI#getAvailableOpenProjectProjects', 'url' => '/api/{apiVersion}/projects','verb' => 'GET', 'requirements' => $requirements],
+		['name' => 'openProjectAPI#getOpenProjectWorkPackageForm', 'url' => '/api/{apiVersion}/projects/{projectId}/work-packages/form','verb' => 'POST', 'requirements' => $requirements],
+		['name' => 'openProjectAPI#getAvailableAssigneesOfAProject', 'url' => '/api/{apiVersion}/projects/{projectId}/available-assignees','verb' => 'GET', 'requirements' => $requirements],
+		['name' => 'openProjectAPI#createWorkPackage', 'url' => '/api/{apiVersion}/create/work-packages','verb' => 'POST', 'requirements' => $requirements],
+		['name' => 'openProjectAPI#getOpenProjectConfiguration', 'url' => '/api/{apiVersion}/configuration', 'verb' => 'GET', 'requirements' => $requirements],
 	]
 ];
