@@ -16,9 +16,7 @@
 - Jérémie Tarot <silopolis@gmail.com>
 - Kiran Parajuli <kiranparajuli589@gmail.com>
 - Louis <louis@chmn.me>
-- nabim777 <nabinalemagar019@gmail.com>
-- Nalem7 <61624650+nabim777@users.noreply.github.com>
-- Parajuli Kiran <kiranparajuli589@gmail.com>
+- nabim777 / Nalem7 <nabinalemagar019@gmail.com>
 - Parimal Satyal <88370597+psatyal@users.noreply.github.com>
 - Phil Davis <phil@jankaritech.com>
 - q-wertz <clemens.sonnleitner@web.de>
