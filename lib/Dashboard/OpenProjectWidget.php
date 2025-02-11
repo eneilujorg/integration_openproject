@@ -33,7 +33,6 @@ use OCP\IL10N;
 use OCP\IURLGenerator;
 use OCP\IUser;
 use OCP\IUserSession;
-use Psr\Log\LoggerInterface;
 
 use OCP\Util;
 
@@ -60,7 +59,6 @@ class OpenProjectWidget implements IWidget {
 	 * @var IUser
 	 */
 	private $user;
-	private LoggerInterface $logger;
 
 	/**
 	 * @var OpenProjectAPIService
@@ -83,7 +81,6 @@ class OpenProjectWidget implements IWidget {
 		$this->config = $config;
 		$this->user = $userSession->getUser();
 		$this->openProjectAPIService = $openProjectAPIService;
-		$this->logger = $logger;
 	}
 
 	/**

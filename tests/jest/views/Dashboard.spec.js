@@ -1,7 +1,9 @@
 /* jshint esversion: 8 */
 
-import { shallowMount, mount, createLocalVue } from '@vue/test-utils'
-import * as dialogs from '@nextcloud/dialogs'
+import { shallowMount, createLocalVue } from '@vue/test-utils'
+import flushPromises from 'flush-promises'
+import util from 'util'
+import { showError, showSuccess } from '@nextcloud/dialogs'
 import axios from '@nextcloud/axios'
 import Dashboard from '../../../src/views/Dashboard.vue'
 import { STATE, AUTH_METHOD, checkOauthConnectionResult } from '../../../src/utils.js'
@@ -14,7 +16,6 @@ jest.mock('@nextcloud/l10n', () => ({
 	getLanguage: jest.fn(),
 }))
 jest.mock('@nextcloud/dialogs', () => ({
-	getLanguage: jest.fn(() => ''),
 	showError: jest.fn(),
 	showSuccess: jest.fn(),
 }))
@@ -37,21 +38,31 @@ global.OC = {}
 const localVue = createLocalVue()
 
 describe('Dashboard.vue', () => {
-	const dashboardTriggerButtonSelector = '.action-item--default-popover .v-popper'
-	const markAsReadButtonSelector = '.action-item__popperr .v-popper__wrapper .v-popper__inner div.open'
-	const errorLabelSelector = '.demo-error-oidc'
+	const errorLabelSelector = 'errorlabel-stub'
 	const emptyContentSelector = 'emptycontent-stub'
+	// url
+	const opUrl = 'http://localhost/apps/integration_openproject/url'
+	const notificationUrl = 'http://localhost/apps/integration_openproject/notifications'
+	const wpNotificationsUrl = 'http://localhost/apps/integration_openproject/work-packages/%s/notifications'
 
 	const defaultState = {
 		authMethods: AUTH_METHOD,
 	}
 
-	let axiosSpy, spyLaunchLoop
+	let spyAxiosGet, spyLaunchLoop
 
 	beforeEach(async () => {
-		axiosSpy = jest.spyOn(axios, 'get')
-			.mockImplementationOnce(() => Promise.resolve({ data: 'http://openproject.org' }))
-			.mockImplementationOnce(() => Promise.resolve({ data: notificationsResponse }))
+		spyAxiosGet = jest.spyOn(axios, 'get')
+			.mockImplementation((url) => {
+				switch (url) {
+				case opUrl:
+					return Promise.resolve({ data: 'http://openproject.org' })
+				case notificationUrl:
+					return Promise.resolve({ data: notificationsResponse })
+				default:
+					return Promise.reject(new Error('unexpected url'))
+				}
+			})
 		spyLaunchLoop = jest.spyOn(Dashboard.methods, 'launchLoop')
 	})
 	afterEach(() => {
@@ -60,148 +71,276 @@ describe('Dashboard.vue', () => {
 	})
 
 	describe('auth method: OAUTH2', () => {
-		it('should show the notification items in the Dashboard', async () => {
-			const wrapper = getWrapper({
-				...defaultState,
-				oauthConnectionErrorMessage: '',
-				oauthConnectionResult: '',
-				isAdminConfigOk: true,
-				userHasOidcToken: false,
-				authMethod: 'oauth2',
+		const commonState = {
+			...defaultState,
+			authMethod: AUTH_METHOD.OAUTH2,
+			oidc_user: false,
+			userHasOidcToken: false,
+		}
+		describe('admin config is not ok', () => {
+			it('should show empty content', async () => {
+				const wrapper = getWrapper({
+					oauthConnectionErrorMessage: '',
+					oauthConnectionResult: '',
+					isAdminConfigOk: false,
+					...commonState,
+				})
+				await flushPromises()
+
+				expect(wrapper.vm.state).toBe(STATE.ERROR)
+				const emptyContent = wrapper.find(emptyContentSelector)
+				expect(emptyContent.exists()).toBe(true)
+				expect(emptyContent.attributes().state).toBe(STATE.ERROR)
+				expect(emptyContent.attributes().authmethod).toBe(AUTH_METHOD.OAUTH2)
+				expect(emptyContent.attributes().dashboard).toBe('true')
+				expect(emptyContent.attributes().isadminconfigok).toBeFalsy()
+
+				expect(wrapper.find(errorLabelSelector).exists()).toBe(false)
+				expect(spyLaunchLoop).toHaveBeenCalledTimes(1)
+				expect(spyAxiosGet).not.toBeCalled()
+				expect(checkOauthConnectionResult).not.toBeCalled()
 			})
-
-			await localVue.nextTick()
-
-			expect(spyLaunchLoop).toHaveBeenCalledTimes(1)
-			expect(axiosSpy).toBeCalledWith(
-				'http://localhost/apps/integration_openproject/url',
-			)
-			expect(axiosSpy).toBeCalledWith(
-				'http://localhost/apps/integration_openproject/notifications',
-			)
-			expect(wrapper.vm.state).toBe(STATE.OK)
-			expect(checkOauthConnectionResult).toHaveBeenCalledTimes(1)
-			expect(wrapper.vm.items).toMatchSnapshot()
 		})
 
+		describe('admin config is ok', () => {
+			describe('not connected to OP', () => {
+				beforeEach(async () => {
+					spyAxiosGet.mockRestore()
+					spyAxiosGet = jest.spyOn(axios, 'get')
+						.mockImplementation((url) => {
+							switch (url) {
+							case opUrl:
+								return Promise.resolve({ data: 'http://openproject.org' })
+							case notificationUrl:
+								// eslint-disable-next-line prefer-promise-reject-errors
+								return Promise.reject({ response: { status: 401 } })
+							default:
+								return Promise.reject(new Error('unexpected url'))
+							}
+						})
+				})
+				it('should show empty content', async () => {
+					const wrapper = getWrapper({
+						oauthConnectionErrorMessage: '',
+						oauthConnectionResult: '',
+						isAdminConfigOk: true,
+						...commonState,
+					})
+					await flushPromises()
+
+					expect(wrapper.vm.state).toBe(STATE.NO_TOKEN)
+					const emptyContent = wrapper.find(emptyContentSelector)
+					expect(emptyContent.exists()).toBe(true)
+					expect(emptyContent.attributes().state).toBe(STATE.NO_TOKEN)
+					expect(emptyContent.attributes().authmethod).toBe(AUTH_METHOD.OAUTH2)
+					expect(emptyContent.attributes().dashboard).toBe('true')
+					expect(emptyContent.attributes().isadminconfigok).toBe('true')
+
+					expect(wrapper.find(errorLabelSelector).exists()).toBe(false)
+					expect(spyAxiosGet).toBeCalledWith(opUrl)
+					expect(spyAxiosGet).toBeCalledWith(notificationUrl)
+					expect(checkOauthConnectionResult).toHaveBeenCalledTimes(1)
+				})
+			})
+
+			describe('connected to OP', () => {
+				it('should show the notification items', async () => {
+					const wrapper = getWrapper({
+						oauthConnectionErrorMessage: 'some-token',
+						oauthConnectionResult: 'success',
+						isAdminConfigOk: true,
+						...commonState,
+					})
+					await flushPromises()
+
+					expect(spyAxiosGet).toBeCalledWith(opUrl)
+					expect(spyAxiosGet).toBeCalledWith(notificationUrl)
+					expect(wrapper.vm.state).toBe(STATE.OK)
+					expect(checkOauthConnectionResult).toHaveBeenCalledTimes(1)
+					expect(wrapper.vm.items).toMatchSnapshot()
+				})
+			})
+		})
 	})
 
 	describe('auth method: OIDC', () => {
-		const state = {
+		const commonState = {
 			...defaultState,
 			oauthConnectionErrorMessage: '',
 			oauthConnectionResult: '',
-			isAdminConfigOk: true,
-			authMethod: 'oidc',
+			authMethod: AUTH_METHOD.OIDC,
 		}
 
 		describe('OIDC user', () => {
-			it('should show error message if token is not available', async () => {
-				const wrapper = getWrapper({ ...state, userHasOidcToken: false })
+			const localState = { ...commonState, oidc_user: true }
+			describe('admin config is not ok', () => {
+				it('should show empty content', async () => {
+					const wrapper = getWrapper({
+						isAdminConfigOk: false,
+						...localState,
+					})
+					await flushPromises()
 
-				expect(wrapper.find(errorLabelSelector).text()).toBe(error.featureNotAvailable)
-				expect(spyLaunchLoop).toHaveBeenCalledTimes(1)
-				expect(wrapper.find(emptyContentSelector).exists()).toBe(false)
+					expect(wrapper.vm.state).toBe(STATE.ERROR)
+					const emptyContent = wrapper.find(emptyContentSelector)
+					expect(emptyContent.exists()).toBe(true)
+					expect(emptyContent.attributes().state).toBe(STATE.ERROR)
+					expect(emptyContent.attributes().authmethod).toBe(AUTH_METHOD.OIDC)
+					expect(emptyContent.attributes().dashboard).toBe('true')
+					expect(emptyContent.attributes().isadminconfigok).toBeFalsy()
+
+					expect(wrapper.find(errorLabelSelector).exists()).toBe(false)
+					expect(spyLaunchLoop).toHaveBeenCalledTimes(1)
+					expect(spyAxiosGet).not.toBeCalled()
+					expect(checkOauthConnectionResult).not.toBeCalled()
+				})
 			})
-			it('should show the notification items in the Dashboard', async () => {
-				const wrapper = getWrapper({ ...state, userHasOidcToken: true })
 
-				await localVue.nextTick()
+			describe('admin config is ok', () => {
+				describe('not connected to OP', () => {
+					beforeEach(async () => {
+						spyAxiosGet.mockRestore()
+						spyAxiosGet = jest.spyOn(axios, 'get')
+							.mockImplementationOnce(() => Promise.resolve({ data: 'http://openproject.org' }))
+							// eslint-disable-next-line prefer-promise-reject-errors
+							.mockImplementationOnce(() => Promise.reject({ response: { status: 401 } }))
+					})
+					it('should show unauthorized error', async () => {
+						const wrapper = getWrapper({
+							...localState,
+							isAdminConfigOk: true,
+							userHasOidcToken: false,
+						})
+						await flushPromises()
 
-				expect(spyLaunchLoop).toHaveBeenCalledTimes(1)
-				expect(axiosSpy).toBeCalledWith(
-					'http://localhost/apps/integration_openproject/url',
-				)
-				expect(axiosSpy).toBeCalledWith(
-					'http://localhost/apps/integration_openproject/notifications',
-				)
-				expect(wrapper.vm.state).toBe(STATE.OK)
-				expect(wrapper.find(errorLabelSelector).exists()).toBe(false)
-				expect(checkOauthConnectionResult).not.toBeCalled()
-				expect(wrapper.vm.items).toMatchSnapshot()
+						expect(wrapper.vm.state).toBe(STATE.NO_TOKEN)
+						expect(wrapper.find(errorLabelSelector).attributes().error).toBe(error.opConnectionUnauthorized)
+
+						expect(spyLaunchLoop).toHaveBeenCalledTimes(1)
+						expect(wrapper.find(emptyContentSelector).exists()).toBe(false)
+						expect(spyAxiosGet).toBeCalledWith(opUrl)
+						expect(spyAxiosGet).toBeCalledWith(notificationUrl)
+						expect(checkOauthConnectionResult).not.toBeCalled()
+					})
+				})
+
+				describe('connected to OP', () => {
+					it('should show the notification items', async () => {
+						const wrapper = getWrapper({
+							...localState,
+							isAdminConfigOk: true,
+							userHasOidcToken: true,
+						})
+						await flushPromises()
+
+						expect(spyAxiosGet).toBeCalledWith(opUrl)
+						expect(spyAxiosGet).toBeCalledWith(notificationUrl)
+						expect(wrapper.vm.state).toBe(STATE.OK)
+						expect(checkOauthConnectionResult).not.toBeCalled()
+						expect(wrapper.vm.items).toMatchSnapshot()
+					})
+				})
 			})
 		})
 
 		describe('non OIDC user', () => {
-			const localState = { ...state, userHasOidcToken: false }
-			it('should show error message', async () => {
-				const wrapper = getWrapper(localState)
-				expect(wrapper.find(errorLabelSelector).text()).toBe(error.featureNotAvailable)
-				expect(wrapper.find(emptyContentSelector).exists()).toBe(false)
+			const localState = { ...commonState, userHasOidcToken: false, oidc_user: false }
+			describe('admin config is not ok', () => {
+				it('should show empty content', async () => {
+					const wrapper = getWrapper({
+						isAdminConfigOk: false,
+						...localState,
+					})
+					await flushPromises()
+
+					expect(wrapper.vm.state).toBe(STATE.ERROR)
+					const emptyContent = wrapper.find(emptyContentSelector)
+					expect(emptyContent.exists()).toBe(true)
+					expect(emptyContent.attributes().state).toBe(STATE.ERROR)
+					expect(emptyContent.attributes().authmethod).toBe(AUTH_METHOD.OIDC)
+					expect(emptyContent.attributes().dashboard).toBe('true')
+					expect(emptyContent.attributes().isadminconfigok).toBeFalsy()
+
+					expect(wrapper.find(errorLabelSelector).exists()).toBe(false)
+					expect(spyLaunchLoop).toHaveBeenCalledTimes(1)
+					expect(spyAxiosGet).not.toBeCalled()
+					expect(checkOauthConnectionResult).not.toBeCalled()
+				})
 			})
-			it('should not call "checkOauthConnectionResult" method', () => {
-				getWrapper(localState)
-				expect(checkOauthConnectionResult).not.toBeCalled()
+
+			describe('admin config is ok', () => {
+				it('should show feature not available error', async () => {
+					const wrapper = getWrapper({
+						isAdminConfigOk: true,
+						...localState,
+					})
+					await flushPromises()
+
+					expect(wrapper.find(errorLabelSelector).attributes().error).toBe(error.featureNotAvailable)
+
+					expect(spyLaunchLoop).toHaveBeenCalledTimes(1)
+					expect(wrapper.find(emptyContentSelector).exists()).toBe(false)
+					expect(checkOauthConnectionResult).not.toBeCalled()
+					expect(spyAxiosGet).not.toBeCalled()
+				})
 			})
 		})
 	})
 
-	describe.skip('mark as read', () => {
-		let axiosSpyGet, wrapper
-		beforeEach(() => {
-			wrapper = mount(
-				Dashboard,
-				{
-					localVue,
-					attachTo: document.body,
-					mocks: {
-						t: (app, msg) => msg,
-						generateUrl() {
-							return '/'
-						},
-					},
-					stubs: {
-						NcAvatar: true,
-					},
-					propsData: {
-						title: 'dashboard',
-					},
-				})
-			axiosSpyGet = jest.spyOn(axios, 'get')
-				.mockImplementation(() => Promise.resolve({
-					data: [
-						notificationsResponse[0],
-					],
-				}))
+	describe('mark as read', () => {
+		const commonState = {
+			...defaultState,
+			authMethod: AUTH_METHOD.OAUTH2,
+			oidc_user: false,
+			userHasOidcToken: false,
+		}
+		const notification = { id: 1 }
+
+		let spyAxiosDelete, spyFetchNotifications
+		beforeEach(async () => {
+			spyAxiosDelete = jest.spyOn(axios, 'delete')
+				.mockImplementation(() => Promise.resolve({}))
+			spyFetchNotifications = jest.spyOn(Dashboard.methods, 'fetchNotifications')
 		})
 		afterEach(() => {
-			axiosSpyGet.mockRestore()
+			jest.clearAllMocks()
+			jest.restoreAllMocks()
 		})
-		it('should mark notifications as read', async () => {
-			const axiosSpyDelete = jest.spyOn(axios, 'delete')
-				.mockImplementationOnce(() => Promise.resolve({}),
-				)
-			dialogs.showSuccess.mockImplementationOnce()
-			await wrapper.vm.fetchNotifications()
-			await localVue.nextTick()
-			await wrapper.find(dashboardTriggerButtonSelector).trigger('click')
-			await localVue.nextTick()
-			await wrapper.find(markAsReadButtonSelector).trigger('click')
-			await localVue.nextTick()
-			expect(axiosSpyDelete).toHaveBeenCalledWith(
-				'http://localhost/apps/integration_openproject/work-packages/36/notifications',
-			)
-			expect(dialogs.showSuccess).toHaveBeenCalledWith(
-				'Notifications associated with Work package marked as read',
-			)
-			wrapper.destroy()
-			axiosSpyDelete.mockRestore()
+
+		it('should re-fetch notifications on success', async () => {
+			const wrapper = getWrapper({
+				oauthConnectionErrorMessage: 'some-token',
+				oauthConnectionResult: 'success',
+				isAdminConfigOk: true,
+				...commonState,
+			})
+			await flushPromises()
+			wrapper.vm.onMarkAsRead(notification)
+			await flushPromises()
+
+			expect(spyAxiosDelete).toBeCalledWith(util.format(wpNotificationsUrl, notification.id))
+			expect(spyFetchNotifications).toHaveBeenCalledTimes(2)
+			expect(showSuccess).toHaveBeenCalledTimes(1)
+			expect(showError).toHaveBeenCalledTimes(0)
 		})
-		it('should show an error message if marking as read failed', async () => {
-			const axiosSpyDelete = jest.spyOn(axios, 'delete')
-				.mockRejectedValueOnce()
-			dialogs.showError.mockImplementationOnce()
-			await wrapper.vm.fetchNotifications()
-			await localVue.nextTick()
-			await wrapper.find(dashboardTriggerButtonSelector).trigger('click')
-			await localVue.nextTick()
-			await wrapper.find(markAsReadButtonSelector).trigger('click')
-			await localVue.nextTick()
-			expect(dialogs.showError).toHaveBeenCalledWith(
-				'Failed to mark notifications as read',
-			)
-			wrapper.destroy()
-			axiosSpyDelete.mockRestore()
+		it('should show error toast message on failure', async () => {
+			spyAxiosDelete = jest.spyOn(axios, 'delete')
+			// eslint-disable-next-line prefer-promise-reject-errors
+				.mockImplementation(() => Promise.reject('mark as read failed'))
+			const wrapper = getWrapper({
+				oauthConnectionErrorMessage: 'some-token',
+				oauthConnectionResult: 'success',
+				isAdminConfigOk: true,
+				...commonState,
+			})
+			await flushPromises()
+			wrapper.vm.onMarkAsRead(notification)
+			await flushPromises()
+
+			expect(spyAxiosDelete).toBeCalledWith(util.format(wpNotificationsUrl, notification.id))
+			expect(spyFetchNotifications).toHaveBeenCalledTimes(1)
+			expect(showError).toHaveBeenCalledTimes(1)
+			expect(showSuccess).toHaveBeenCalledTimes(0)
 		})
 	})
 })

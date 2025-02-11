@@ -147,7 +147,7 @@ export default {
 			clearInterval(this.loop)
 		},
 		async launchLoop() {
-			if (!this.isAdminConfigOk) {
+			if (!this.isAdminConfigOk || this.isOIDCMethodWithNonOIDCUser) {
 				this.state = STATE.ERROR
 				return
 			}
@@ -278,7 +278,7 @@ export default {
 			const url = generateUrl(
 				'/apps/integration_openproject/work-packages/' + item.id + '/notifications',
 			)
-			axios.delete(url).then((response) => {
+			axios.delete(url).then(() => {
 				showSuccess(
 					t('integration_openproject', 'Notifications associated with Work package marked as read'),
 				)
