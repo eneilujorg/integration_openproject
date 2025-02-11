@@ -72,8 +72,7 @@ class OpenProjectWidget implements IWidget {
 		IURLGenerator $url,
 		IConfig $config,
 		IUserSession $userSession,
-		OpenProjectAPIService $openProjectAPIService,
-		LoggerInterface $logger
+		OpenProjectAPIService $openProjectAPIService
 	) {
 		$this->initialStateService = $initialStateService;
 		$this->l10n = $l10n;
