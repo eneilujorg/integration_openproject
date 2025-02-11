@@ -221,6 +221,9 @@ export default {
 				} else if (error.response && error.response.status === 401) {
 					showError(t('integration_openproject', 'Failed to get OpenProject notifications'))
 					this.state = STATE.NO_TOKEN
+					if (this.isOIDCAuthMethod) {
+						this.userHasOidcToken = false
+					}
 				} else {
 					// there was an error in notif processing
 					this.state = STATE.ERROR
