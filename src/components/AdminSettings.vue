@@ -127,7 +127,14 @@
 				:title="t('integration_openproject', 'Authorization settings')"
 				:is-complete="isAuthorizationSettingFormComplete"
 				:is-disabled="isAuthorizationSettingFormInDisabledMode"
-				:is-dark-theme="isDarkTheme" />
+				:is-dark-theme="isDarkTheme"
+				:has-error="!isOIDCAppInstalledAndEnabled" />
+			<ErrorNote
+				v-if="!isOIDCAppInstalledAndEnabled"
+				:error-title="messagesFmt.appNotInstalled('user_oidc')"
+				:error-message="messages.appRequiredForOIDCMethod"
+				:error-link="appLinks.user_oidc.installLink"
+				:error-link-label="messages.downloadAndEnableApp" />
 			<div class="authorization-settings--content">
 				<FieldValue v-if="isAuthorizationSettingsInViewMode"
 					is-required
@@ -141,6 +148,7 @@
 					<div id="select">
 						<NcSelect
 							input-id="provider-search-input"
+							:disabled="!isOIDCAppInstalledAndEnabled"
 							:placeholder="t('integration_openproject', 'Select an OIDC provider')"
 							:options="registeredOidcProviders"
 							:value="getCurrentSelectedOIDCProvider"
@@ -157,7 +165,7 @@
 				<FieldValue v-if="isAuthorizationSettingsInViewMode"
 					is-required
 					class="pb-1"
-					:title="t('integration_openproject', 'OpenProject client ID')"
+					:title="messages.opClientId"
 					:value="state.authorization_settings.targeted_audience_client_id" />
 				<div v-else class="authorization-settings--content--client">
 					<TextInput
@@ -165,12 +173,15 @@
 						v-model="state.authorization_settings.targeted_audience_client_id"
 						class="py-1"
 						is-required
-						:label="t('integration_openproject', 'OpenProject client ID')"
+						:disabled="!isOIDCAppInstalledAndEnabled"
+						:place-holder="messages.opClientId"
+						:label="messages.opClientId"
 						hint-text="You can get this value from Keycloak when you set-up define the client" />
 				</div>
 			</div>
 			<div class="form-actions">
 				<NcButton v-if="isAuthorizationSettingsInViewMode"
+					:disabled="!isOIDCAppInstalledAndEnabled"
 					data-test-id="reset-auth-settings-btn"
 					@click="setAuthorizationSettingInEditMode">
 					<template #icon>
@@ -321,7 +332,7 @@
 				:is-project-folder-setup-heading="true"
 				:title="t('integration_openproject', 'Project folders (recommended)')"
 				:is-setup-complete-without-project-folders="isSetupCompleteWithoutProjectFolders"
-				:is-there-error-after-project-folder-and-app-password-setup="isThereErrorAfterProjectFolderAndAppPasswordSetup"
+				:has-error="isThereErrorAfterProjectFolderAndAppPasswordSetup"
 				:show-encryption-warning-for-group-folders="showEncryptionWarningForGroupFolders"
 				:is-complete="isProjectFolderSetupCompleted"
 				:is-disabled="isProjectFolderSetUpInDisableMode"
@@ -526,9 +537,13 @@ import FieldValue from './admin/FieldValue.vue'
 import FormHeading from './admin/FormHeading.vue'
 import CheckBox from '../components/settings/CheckBox.vue'
 import SettingsTitle from '../components/settings/SettingsTitle.vue'
+import ErrorNote from './settings/ErrorNote.vue'
 import { F_MODES, FORM, USER_SETTINGS, AUTH_METHOD, AUTH_METHOD_LABEL } from '../utils.js'
 import TermsOfServiceUnsigned from './admin/TermsOfServiceUnsigned.vue'
 import dompurify from 'dompurify'
+import { messages, messagesFmt } from '../constants/messages.js'
+import { appLinks } from '../constants/links.js'
+
 export default {
 	name: 'AdminSettings',
 	components: {
@@ -547,6 +562,7 @@ export default {
 		NcCheckboxRadioSwitch,
 		TermsOfServiceUnsigned,
 		NcNoteCard,
+		ErrorNote,
 	},
 	data() {
 		return {
@@ -613,6 +629,9 @@ export default {
 				currentTargetedAudienceClientIdSelected: null,
 			},
 			registeredOidcProviders: [],
+			messages,
+			messagesFmt,
+			appLinks,
 		}
 	},
 	computed: {
@@ -954,7 +973,7 @@ export default {
 			}
 		},
 		projectFolderSetUpErrorMessageDescription(errorKey) {
-			const linkText = t('integration_openproject', 'Download and enable it here')
+			const linkText = this.messages.downloadAndEnableApp
 			const url = generateUrl('settings/apps/files/groupfolders')
 			const htmlLink = `<a class="link" href="${url}" target="_blank" title="${linkText}">${linkText}</a>`
 			switch (errorKey) {

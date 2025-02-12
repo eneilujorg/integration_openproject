@@ -4,7 +4,7 @@
 		<div v-if="isProjectFolderSetupHeading && isSetupCompleteWithoutProjectFolders" class="setup-complete-without-project-folders">
 			<MinusThickIcon :fill-color="isDarkTheme ? '#000000' : '#FFFFFF'" :size="12" />
 		</div>
-		<div v-else-if="isThereErrorAfterProjectFolderAndAppPasswordSetup" class="project-folder-setup-error">
+		<div v-else-if="hasError" class="project-folder-setup-error">
 			<ExclamationThickIcon fill-color="#FFFFFF" :size="12" />
 		</div>
 		<div v-else-if="showEncryptionWarningForGroupFolders" class="project-folder-setup-warning">
@@ -24,7 +24,7 @@
 		<div class="title"
 			:class="{
 				'green-text': isComplete,
-				'red-text': isThereErrorAfterProjectFolderAndAppPasswordSetup,
+				'red-text': hasError,
 				'warn-text': showEncryptionWarningForGroupFolders
 			}">
 			{{ title }}
@@ -68,7 +68,7 @@ export default {
 			type: Boolean,
 			default: false,
 		},
-		isThereErrorAfterProjectFolderAndAppPasswordSetup: {
+		hasError: {
 			type: Boolean,
 			default: false,
 		},

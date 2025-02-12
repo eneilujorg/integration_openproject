@@ -21,6 +21,11 @@ const selector = {
 
 global.t = (app, text) => text
 
+const selectors = {
+	input: 'input',
+	copyButton: 'button.text-input-copy-value',
+}
+
 describe('TextInput.vue', () => {
 	describe('messages', () => {
 		it('should show error message if provided', () => {
@@ -130,6 +135,30 @@ describe('TextInput.vue', () => {
 				readOnly: true,
 			})
 			expect(wrapper).toMatchSnapshot()
+		})
+	})
+	describe('disabled prop', () => {
+		it('should disable input elements when disabled is true', () => {
+			const wrapper = getWrapper({
+				label: 'test label',
+				withCopyBtn: true,
+				disabled: true,
+				value: 'some value',
+			})
+
+			expect(wrapper.find(selectors.input).attributes().disabled).toBe('disabled')
+			expect(wrapper.find(selectors.copyButton).attributes().disabled).toBe('disabled')
+		})
+		it('should disable input elements when disabled is false', () => {
+			const wrapper = getWrapper({
+				label: 'test label',
+				withCopyBtn: true,
+				disabled: false,
+				value: 'some value',
+			})
+
+			expect(wrapper.find(selectors.input).attributes().disabled).toBeFalsy()
+			expect(wrapper.find(selectors.copyButton).attributes().disabled).toBeFalsy()
 		})
 	})
 })

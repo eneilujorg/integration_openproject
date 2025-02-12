@@ -1,10 +1,12 @@
 /* jshint esversion: 8 */
 
 import axios from '@nextcloud/axios'
+import * as dialogs from '@nextcloud/dialogs'
 import { createLocalVue, shallowMount, mount } from '@vue/test-utils'
 import AdminSettings from '../../../src/components/AdminSettings.vue'
 import { F_MODES, AUTH_METHOD } from '../../../src/utils.js'
-import * as dialogs from '@nextcloud/dialogs'
+import { appLinks } from '../../../src/constants/links.js'
+import { messages, messagesFmt } from '../../../src/constants/messages.js'
 
 jest.mock('@nextcloud/axios', () => {
 	const originalModule = jest.requireActual('@nextcloud/axios')
@@ -73,6 +75,8 @@ const selectors = {
 	authorizationSettingsSaveButton: '[data-test-id="submit-oidc-auth-settings-values-btn"]',
 	providerInput: '#provider-search-input',
 	oidcDropDownFirstElement: 'ul [title="keycloak"]',
+	authorizationSettingsProvider: '.authorization-settings--content--provider',
+	authorizationSettingsClient: '.authorization-settings--content--client',
 	authorizationMethodResetButton: '[data-test-id="reset-authorization-method-btn"]',
 	authorizationCancelResetButton: '[data-test-id="cancel-edit-auth-method-btn"]',
 	authorizationSettingsResetButton: '[data-test-id="reset-auth-settings-btn"]',
@@ -1130,28 +1134,73 @@ describe('AdminSettings.vue', () => {
 		})
 	})
 
-	describe('Authorization settings', () => {
+	describe('OIDC authorization settings', () => {
+		const formHeaderSelector = `${selectors.authorizationSettings} > formheading-stub`
+		const errorNoteSelector = `${selectors.authorizationSettings} > errornote-stub`
+		const authProviderSelector = `${selectors.authorizationSettingsProvider} ncselect-stub`
+		const authClientSelector = `${selectors.authorizationSettingsClient} > textinput-stub`
+		const state = {
+			openproject_instance_url: 'http://openproject.com',
+			authorization_method: AUTH_METHOD.OIDC,
+			authorization_settings: {
+				oidc_provider: null,
+				targeted_audience_client_id: null,
+			},
+		}
+
 		describe('view mode form complete', () => {
-			let wrapper, authorizationSettingsForm
-			beforeEach(() => {
-				wrapper = getMountedWrapper({
-					state: {
-						openproject_instance_url: 'http://openproject.com',
-						authorization_method: AUTH_METHOD.OIDC,
-						authorization_settings: {
-							oidc_provider: 'some-oidc-provider',
-							targeted_audience_client_id: 'some-target-aud-client-id',
-						},
-					},
+			let wrapper
+			const authorizationSettingsState = {
+				authorization_settings: {
+					oidc_provider: 'some-oidc-provider',
+					targeted_audience_client_id: 'some-target-aud-client-id',
+				},
+			}
+
+			describe('user_oidc app enabled', () => {
+				beforeEach(async () => {
+					wrapper = getWrapper({ state: { ...state, ...authorizationSettingsState, user_oidc_enabled: true } })
 				})
-				authorizationSettingsForm = wrapper.find(selectors.authorizationSettings)
+				it('should show configured OIDC authorization', () => {
+					const authorizationSettingsForm = wrapper.find(selectors.authorizationSettings)
+					const formHeader = wrapper.find(formHeaderSelector)
+					const errorNote = wrapper.find(errorNoteSelector)
+
+					expect(authorizationSettingsForm.element).toMatchSnapshot()
+					expect(wrapper.vm.isIntegrationCompleteWithOIDC).toBe(true)
+					expect(formHeader.attributes().haserror).toBe(undefined)
+					expect(errorNote.exists()).toBe(false)
+				})
+				it('should not disable reset button', () => {
+					const resetButton = wrapper.find(selectors.authorizationSettingsResetButton)
+					expect(resetButton.attributes().disabled).toBe(undefined)
+				})
 			})
 
-			it('should show field values and hide authorization settings form', () => {
-				expect(authorizationSettingsForm).toMatchSnapshot()
-			})
-			it('should complete OIDC integration', () => {
-				expect(wrapper.vm.isIntegrationCompleteWithOIDC).toBe(true)
+			describe('user_oidc app disabled', () => {
+				beforeEach(async () => {
+					wrapper = getWrapper({ state: { ...state, ...authorizationSettingsState, user_oidc_enabled: false } })
+				})
+				it('should show field values and hide authorization settings form', () => {
+					const authorizationSettingsForm = wrapper.find(selectors.authorizationSettings)
+					expect(wrapper.vm.isIntegrationCompleteWithOIDC).toBe(true)
+					expect(authorizationSettingsForm.element).toMatchSnapshot()
+				})
+				it('should disable reset button', () => {
+					const resetButton = wrapper.find(selectors.authorizationSettingsResetButton)
+					expect(resetButton.attributes().disabled).toBe('true')
+				})
+				it('should show app disabled error messages', () => {
+					const formHeader = wrapper.find(formHeaderSelector)
+					const errorNote = wrapper.find(errorNoteSelector)
+
+					expect(formHeader.exists()).toBe(true)
+					expect(formHeader.attributes().haserror).toBe('true')
+					expect(errorNote.exists()).toBe(true)
+					expect(errorNote.attributes().errortitle).toBe(messagesFmt.appNotInstalled())
+					expect(errorNote.attributes().errormessage).toBe(messages.appRequiredForOIDCMethod)
+					expect(errorNote.attributes().errorlink).toBe(appLinks.user_oidc.installLink)
+				})
 			})
 		})
 
@@ -1168,6 +1217,7 @@ describe('AdminSettings.vue', () => {
 							oidc_provider: 'some-oidc-provider',
 							targeted_audience_client_id: 'some-target-aud-client-id',
 						},
+						user_oidc_enabled: true,
 					},
 				})
 				authorizationSettingsForm = wrapper.find(selectors.authorizationSettings)
@@ -1221,99 +1271,133 @@ describe('AdminSettings.vue', () => {
 		})
 
 		describe('edit mode, incomplete admin configuration', () => {
-			let wrapper, authorizationSettingsForm
-			beforeEach(() => {
-				wrapper = getMountedWrapper({
-					state: {
-						openproject_instance_url: 'http://openproject.com',
-						authorization_method: AUTH_METHOD.OIDC,
-						authorization_settings: {
-							oidc_provider: null,
-							targeted_audience_client_id: null,
-						},
-					},
-				})
-				authorizationSettingsForm = wrapper.find(selectors.authorizationSettings)
-			})
+			let wrapper
 
-			it('should show authorization settings in edit mode', () => {
-				expect(wrapper.vm.formMode.authorizationSetting).toBe(F_MODES.EDIT)
-			})
-
-			it('should show "save" button disabled', () => {
-				const authSettingsSaveButton = authorizationSettingsForm.find(selectors.authorizationSettingsSaveButton)
-				expect(authSettingsSaveButton.attributes().disabled).toBe('disabled')
-			})
-
-			it('should disable "save" button for empty "oidc_provider"', () => {
-				const wrapper = getMountedWrapper({
-					state: {
-						openproject_instance_url: 'http://openproject.com',
-						authorization_method: AUTH_METHOD.OIDC,
-						authorization_settings: {
-							oidc_provider: null,
-							targeted_audience_client_id: 'some-targeted-aud-client-id',
-						},
-					},
-				})
-				const authSettingsSaveButton = wrapper.find(selectors.authorizationSettingsSaveButton)
-				expect(authSettingsSaveButton.attributes().disabled).toBe('disabled')
-			})
-
-			it('should disable "save" button for empty "targeted_audience_client_id"', () => {
-				const wrapper = getMountedWrapper({
-					state: {
-						openproject_instance_url: 'http://openproject.com',
-						authorization_method: AUTH_METHOD.OIDC,
-						authorization_settings: {
-							oidc_provider: 'some-oidc-provider',
-							targeted_audience_client_id: null,
-						},
-					},
-				})
-				const authSettingsSaveButton = wrapper.find(selectors.authorizationSettingsSaveButton)
-				expect(authSettingsSaveButton.attributes().disabled).toBe('disabled')
-			})
-
-			describe('save button', () => {
+			describe('user_oidc app enabled', () => {
 				beforeEach(async () => {
-					axios.put.mockReset()
-					jest.clearAllMocks()
-					await wrapper.setData({
-						registeredOidcProviders: ['keycloak'],
-					})
-					const providerInputField = wrapper.find(selectors.providerInput)
-					await providerInputField.setValue('key')
-					await localVue.nextTick()
-					const optionList = wrapper.find(selectors.oidcDropDownFirstElement)
-					await optionList.trigger('click')
-					await authorizationSettingsForm.find(selectors.authSettingTargetAudClient).trigger('click')
-					await authorizationSettingsForm.find(selectors.authSettingTargetAudClient).setValue('openproject')
+					wrapper = getWrapper({ state: { ...state, user_oidc_enabled: true } })
 				})
 
-				it('should be enabled for authorization values set', async () => {
-					const authSettingsSaveButton = wrapper.find(selectors.authorizationSettingsSaveButton)
-					expect(authSettingsSaveButton.attributes().disabled).toBe(undefined)
-				})
+				it('should show authorization settings in edit mode without errors', () => {
+					const formHeader = wrapper.find(formHeaderSelector)
+					const errorNote = wrapper.find(errorNoteSelector)
 
-				it('"on trigger" should set auth settings values', async () => {
-					const saveOPOptionsSpy = jest.spyOn(axios, 'put')
-						.mockImplementationOnce(() => Promise.resolve({ data: { status: true, oPOAuthTokenRevokeStatus: '' } }))
-					const authSettingsSaveButton = wrapper.find(selectors.authorizationSettingsSaveButton)
-					expect(authSettingsSaveButton.exists()).toBe(true)
-					await authSettingsSaveButton.trigger('click')
-					await wrapper.vm.$nextTick()
-					expect(saveOPOptionsSpy).toBeCalledTimes(1)
-					expect(saveOPOptionsSpy).toBeCalledWith(
-						'http://localhost/apps/integration_openproject/admin-config',
-						{
-							values: {
-								oidc_provider: 'keycloak',
-								targeted_audience_client_id: 'openproject',
+					expect(wrapper.vm.formMode.authorizationSetting).toBe(F_MODES.EDIT)
+					expect(formHeader.attributes().haserror).toBe(undefined)
+					expect(errorNote.exists()).toBe(false)
+				})
+				it('should not disable form elements', () => {
+					const authProviderSelect = wrapper.find(authProviderSelector)
+					const authClientInput = wrapper.find(authClientSelector)
+
+					expect(authProviderSelect.attributes().disabled).toBe(undefined)
+					expect(authClientInput.attributes().disabled).toBe(undefined)
+				})
+				it('should show "save" button disabled', () => {
+					const authorizationSettingsForm = wrapper.find(selectors.authorizationSettings)
+					const authSettingsSaveButton = authorizationSettingsForm.find(selectors.authorizationSettingsSaveButton)
+					expect(authSettingsSaveButton.attributes().disabled).toBe('true')
+				})
+				it('should disable "save" button for empty "oidc_provider"', () => {
+					const wrapper = getWrapper({
+						state: {
+							openproject_instance_url: 'http://openproject.com',
+							authorization_method: AUTH_METHOD.OIDC,
+							authorization_settings: {
+								oidc_provider: null,
+								targeted_audience_client_id: 'some-targeted-aud-client-id',
 							},
 						},
-					)
-					expect(wrapper.vm.formMode.authorizationSetting).toBe(F_MODES.VIEW)
+					})
+					const authSettingsSaveButton = wrapper.find(selectors.authorizationSettingsSaveButton)
+					expect(authSettingsSaveButton.attributes().disabled).toBe('true')
+				})
+				it('should disable "save" button for empty "targeted_audience_client_id"', () => {
+					const wrapper = getWrapper({
+						state: {
+							openproject_instance_url: 'http://openproject.com',
+							authorization_method: AUTH_METHOD.OIDC,
+							authorization_settings: {
+								oidc_provider: 'some-oidc-provider',
+								targeted_audience_client_id: null,
+							},
+						},
+					})
+					const authSettingsSaveButton = wrapper.find(selectors.authorizationSettingsSaveButton)
+					expect(authSettingsSaveButton.attributes().disabled).toBe('true')
+				})
+
+				describe('save button', () => {
+					beforeEach(async () => {
+						axios.put.mockReset()
+						jest.clearAllMocks()
+						wrapper = getMountedWrapper({
+							registeredOidcProviders: ['keycloak'],
+							state: {
+								...state,
+								user_oidc_enabled: true,
+							},
+						 })
+						const authorizationSettingsForm = wrapper.find(selectors.authorizationSettings)
+						const providerInputField = wrapper.find(selectors.providerInput)
+						await providerInputField.setValue('key')
+						await localVue.nextTick()
+						const optionList = wrapper.find(selectors.oidcDropDownFirstElement)
+						await optionList.trigger('click')
+						await authorizationSettingsForm.find(selectors.authSettingTargetAudClient).trigger('click')
+						await authorizationSettingsForm.find(selectors.authSettingTargetAudClient).setValue('openproject')
+					})
+					it('should be enabled for authorization values set', async () => {
+						const authSettingsSaveButton = wrapper.find(selectors.authorizationSettingsSaveButton)
+						expect(authSettingsSaveButton.attributes().disabled).toBe(undefined)
+					})
+					it('"on trigger" should set auth settings values', async () => {
+						const saveOPOptionsSpy = jest.spyOn(axios, 'put')
+							.mockImplementationOnce(() => Promise.resolve({ data: { status: true, oPOAuthTokenRevokeStatus: '' } }))
+						const authSettingsSaveButton = wrapper.find(selectors.authorizationSettingsSaveButton)
+						expect(authSettingsSaveButton.exists()).toBe(true)
+						await authSettingsSaveButton.trigger('click')
+						await wrapper.vm.$nextTick()
+						expect(saveOPOptionsSpy).toBeCalledTimes(1)
+						expect(saveOPOptionsSpy).toBeCalledWith(
+							'http://localhost/apps/integration_openproject/admin-config',
+							{
+								values: {
+									oidc_provider: 'keycloak',
+									targeted_audience_client_id: 'openproject',
+								},
+							},
+						)
+						expect(wrapper.vm.formMode.authorizationSetting).toBe(F_MODES.VIEW)
+					})
+				})
+			})
+
+			describe('user_oidc app disabled', () => {
+				beforeEach(async () => {
+					wrapper = getWrapper({ state: { ...state, user_oidc_enabled: false } })
+				})
+
+				it('should show app disabled error messages', () => {
+					const formHeaderError = wrapper.find(formHeaderSelector)
+					const errorNote = wrapper.find(errorNoteSelector)
+
+					expect(formHeaderError.exists()).toBe(true)
+					expect(formHeaderError.attributes().haserror).toBe('true')
+					expect(errorNote.exists()).toBe(true)
+					expect(errorNote.attributes().errortitle).toBe(messagesFmt.appNotInstalled())
+					expect(errorNote.attributes().errormessage).toBe(messages.appRequiredForOIDCMethod)
+					expect(errorNote.attributes().errorlink).toBe(appLinks.user_oidc.installLink)
+				})
+				it('should disable form elements', () => {
+					const authorizationSettingsForm = wrapper.find(selectors.authorizationSettings)
+					const authSettingsSaveButton = authorizationSettingsForm.find(selectors.authorizationSettingsSaveButton)
+					const authProviderSelect = wrapper.find(authProviderSelector)
+					const authClientInput = wrapper.find(authClientSelector)
+
+					expect(authSettingsSaveButton.attributes().disabled).toBe('true')
+					expect(authProviderSelect.attributes().disabled).toBe('true')
+					expect(authClientInput.attributes().disabled).toBe('true')
 				})
 			})
 		})

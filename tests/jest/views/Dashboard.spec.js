@@ -6,7 +6,7 @@ import axios from '@nextcloud/axios'
 import Dashboard from '../../../src/views/Dashboard.vue'
 import { STATE, AUTH_METHOD, checkOauthConnectionResult } from '../../../src/utils.js'
 import notificationsResponse from '../fixtures/notificationsResponse.json'
-import { error } from '../../../src/constants/messages.js'
+import { messages } from '../../../src/constants/messages.js'
 
 jest.mock('@nextcloud/axios')
 jest.mock('@nextcloud/l10n', () => ({
@@ -99,7 +99,7 @@ describe('Dashboard.vue', () => {
 			it('should show error message if token is not available', async () => {
 				const wrapper = getWrapper({ ...state, userHasOidcToken: false })
 
-				expect(wrapper.find(errorLabelSelector).text()).toBe(error.featureNotAvailable)
+				expect(wrapper.find(errorLabelSelector).text()).toBe(messages.featureNotAvailable)
 				expect(spyLaunchLoop).toHaveBeenCalledTimes(1)
 				expect(wrapper.find(emptyContentSelector).exists()).toBe(false)
 			})
@@ -126,7 +126,7 @@ describe('Dashboard.vue', () => {
 			const localState = { ...state, userHasOidcToken: false }
 			it('should show error message', async () => {
 				const wrapper = getWrapper(localState)
-				expect(wrapper.find(errorLabelSelector).text()).toBe(error.featureNotAvailable)
+				expect(wrapper.find(errorLabelSelector).text()).toBe(messages.featureNotAvailable)
 				expect(wrapper.find(emptyContentSelector).exists()).toBe(false)
 			})
 			it('should not call "checkOauthConnectionResult" method', () => {
