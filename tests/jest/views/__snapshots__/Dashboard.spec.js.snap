@@ -8,7 +8,7 @@ exports[`Dashboard.vue auth method: OAUTH2 admin config is ok connected to OP sh
     "id": "17",
     "mainText": "(6) Create wireframes for new landing page",
     "overlayIconUrl": "",
-    "subText": "Scrum project - assignee, mentioned, Date alert",
+    "subText": "Scrum project - accountable, commented, mentioned, Date alert",
     "targetUrl": "http://openproject.org/notifications/details/17/activity/",
   },
   {
@@ -35,7 +35,7 @@ exports[`Dashboard.vue auth method: OAUTH2 admin config is ok connected to OP sh
     "id": "36",
     "mainText": "(2) write a software",
     "overlayIconUrl": "",
-    "subText": "Dev-large - assignee",
+    "subText": "Dev-large - assignee, watcher",
     "targetUrl": "http://openproject.org/notifications/details/36/activity/",
   },
 ]
@@ -49,7 +49,7 @@ exports[`Dashboard.vue auth method: OIDC OIDC user admin config is ok connected 
     "id": "17",
     "mainText": "(6) Create wireframes for new landing page",
     "overlayIconUrl": "",
-    "subText": "Scrum project - assignee, mentioned, Date alert",
+    "subText": "Scrum project - accountable, commented, mentioned, Date alert",
     "targetUrl": "http://openproject.org/notifications/details/17/activity/",
   },
   {
@@ -76,7 +76,7 @@ exports[`Dashboard.vue auth method: OIDC OIDC user admin config is ok connected 
     "id": "36",
     "mainText": "(2) write a software",
     "overlayIconUrl": "",
-    "subText": "Dev-large - assignee",
+    "subText": "Dev-large - assignee, watcher",
     "targetUrl": "http://openproject.org/notifications/details/36/activity/",
   },
 ]
