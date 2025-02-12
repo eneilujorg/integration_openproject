@@ -1,17 +1,17 @@
 [
 	{
 		"_type": "Notification",
-		"id": 47,
+		"id": 46,
 		"readIAN": false,
 		"reason": "assigned",
 		"createdAt": "2022-08-17T10:27:01Z",
 		"updatedAt": "2022-08-17T10:28:12Z",
 		"_links": {
 			"self": {
-				"href": "/api/v3/notifications/47"
+				"href": "/api/v3/notifications/46"
 			},
 			"readIAN": {
-				"href": "/api/v3/notifications/47/read_ian",
+				"href": "/api/v3/notifications/46/read_ian",
 				"method": "post"
 			},
 			"actor": {
@@ -35,9 +35,9 @@
 		"_type": "Notification",
 		"id": 46,
 		"readIAN": false,
-		"reason": "assigned",
-		"createdAt": "2022-08-17T10:26:28Z",
-		"updatedAt": "2022-08-17T10:27:41Z",
+		"reason": "responsible",
+		"createdAt": "2022-08-16T10:26:28Z",
+		"updatedAt": "2022-08-16T10:27:41Z",
 		"_links": {
 			"self": {
 				"href": "/api/v3/notifications/46"
@@ -47,8 +47,8 @@
 				"method": "post"
 			},
 			"actor": {
-				"href": "/api/v3/users/8",
-				"title": "Admin de DEV user"
+				"href": "/api/v3/users/5",
+				"title": "Alice Hansen"
 			},
 			"project": {
 				"href": "/api/v3/projects/2",
@@ -67,7 +67,7 @@
 		"_type": "Notification",
 		"id": 45,
 		"readIAN": false,
-		"reason": "assigned",
+		"reason": "responsible",
 		"createdAt": "2022-08-17T10:12:47Z",
 		"updatedAt": "2022-08-17T10:13:53Z",
 		"_links": {
@@ -99,7 +99,7 @@
 		"_type": "Notification",
 		"id": 43,
 		"readIAN": false,
-		"reason": "assigned",
+		"reason": "watched",
 		"createdAt": "2022-08-17T10:12:19Z",
 		"updatedAt": "2022-08-17T10:13:25Z",
 		"_links": {
@@ -131,7 +131,7 @@
 		"_type": "Notification",
 		"id": 42,
 		"readIAN": false,
-		"reason": "assigned",
+		"reason": "commented",
 		"createdAt": "2022-08-17T10:05:36Z",
 		"updatedAt": "2022-08-17T10:06:39Z",
 		"_links": {
@@ -227,7 +227,7 @@
 		"_type": "Notification",
 		"id": 37,
 		"readIAN": false,
-		"reason": "assigned",
+		"reason": "mentioned",
 		"createdAt": "2022-08-09T07:28:54Z",
 		"updatedAt": "2022-08-09T08:00:08Z",
 		"_links": {

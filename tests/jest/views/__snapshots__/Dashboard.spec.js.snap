@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`Dashboard.vue auth method: OAUTH2 should show the notification items in the Dashboard 1`] = `
+exports[`Dashboard.vue auth method: OAUTH2 admin config is ok connected to OP should show the notification items 1`] = `
 [
   {
     "avatarUrl": "http://localhost/apps/integration_openproject/avatar?userId=8&userName=Admin%20de%20DEV%20user",
@@ -8,7 +8,7 @@ exports[`Dashboard.vue auth method: OAUTH2 should show the notification items in
     "id": "17",
     "mainText": "(6) Create wireframes for new landing page",
     "overlayIconUrl": "",
-    "subText": "Scrum project - assignee, mentioned, Date alert",
+    "subText": "Scrum project - accountable, commented, mentioned, Date alert",
     "targetUrl": "http://openproject.org/notifications/details/17/activity/",
   },
   {
@@ -35,13 +35,13 @@ exports[`Dashboard.vue auth method: OAUTH2 should show the notification items in
     "id": "36",
     "mainText": "(2) write a software",
     "overlayIconUrl": "",
-    "subText": "Dev-large - assignee",
+    "subText": "Dev-large - assignee, watcher",
     "targetUrl": "http://openproject.org/notifications/details/36/activity/",
   },
 ]
 `;
 
-exports[`Dashboard.vue auth method: OIDC OIDC user should show the notification items in the Dashboard 1`] = `
+exports[`Dashboard.vue auth method: OIDC OIDC user admin config is ok connected to OP should show the notification items 1`] = `
 [
   {
     "avatarUrl": "http://localhost/apps/integration_openproject/avatar?userId=8&userName=Admin%20de%20DEV%20user",
@@ -49,7 +49,7 @@ exports[`Dashboard.vue auth method: OIDC OIDC user should show the notification 
     "id": "17",
     "mainText": "(6) Create wireframes for new landing page",
     "overlayIconUrl": "",
-    "subText": "Scrum project - assignee, mentioned, Date alert",
+    "subText": "Scrum project - accountable, commented, mentioned, Date alert",
     "targetUrl": "http://openproject.org/notifications/details/17/activity/",
   },
   {
@@ -76,7 +76,7 @@ exports[`Dashboard.vue auth method: OIDC OIDC user should show the notification 
     "id": "36",
     "mainText": "(2) write a software",
     "overlayIconUrl": "",
-    "subText": "Dev-large - assignee",
+    "subText": "Dev-large - assignee, watcher",
     "targetUrl": "http://openproject.org/notifications/details/36/activity/",
   },
 ]

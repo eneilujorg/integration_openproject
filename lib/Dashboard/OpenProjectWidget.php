@@ -123,6 +123,7 @@ class OpenProjectWidget implements IWidget {
 	public function load(): void {
 		Util::addScript(Application::APP_ID, Application::APP_ID . '-dashboard');
 		Util::addStyle(Application::APP_ID, 'dashboard');
+
 		$oauthConnectionResult = $this->config->getUserValue(
 			$this->user->getUID(), Application::APP_ID, 'oauth_connection_result', ''
 		);
@@ -139,7 +140,8 @@ class OpenProjectWidget implements IWidget {
 		// authorization method can be either a 'oidc' or 'oauth2'
 		// for 'oidc' state to be loaded
 		$token = $this->openProjectAPIService->getOIDCToken();
-		$this->initialStateService->provideInitialState('user-has-oidc-token', $token !== null);
+		$this->initialStateService->provideInitialState('user-has-oidc-token', boolval($token));
+		$this->initialStateService->provideInitialState('oidc_user', $this->openProjectAPIService->isOIDCUser());
 
 		// for 'oauth2' state to be loaded
 		$this->initialStateService->provideInitialState(
