@@ -107,6 +107,7 @@ const selectors = {
 	setupIntegrationDocumentationLinkSelector: '.settings--documentation-info',
 	adminAuditNoteCardInfoSelector: '[type="info"]',
 	encryptionNoteCardWarningSelector: '.notecard--warning',
+	appNotSupportedError: '[type="error"]'
 }
 
 const completeOAUTH2IntegrationState = {
@@ -874,6 +875,7 @@ describe('AdminSettings.vue', () => {
 				await wrapper.setData({
 					state: {
 						user_oidc_enabled: false,
+						user_oidc_supported: true,
 					},
 				})
 				const openIDProviderDisabled = wrapper.find(selectors.openIdIdentityDisabled)
@@ -884,6 +886,7 @@ describe('AdminSettings.vue', () => {
 				await wrapper.setData({
 					state: {
 						user_oidc_enabled: true,
+						user_oidc_supported: true,
 					},
 				})
 				expect(wrapper.find(selectors.openIdIdentityDisabled).exists()).toBe(false)
@@ -909,6 +912,7 @@ describe('AdminSettings.vue', () => {
 				await wrapper.setData({
 					state: {
 						user_oidc_enabled: true,
+						user_oidc_supported: true,
 						authorization_settings: {
 							oidc_provider: null,
 							targeted_audience_client_id: null,
@@ -978,6 +982,7 @@ describe('AdminSettings.vue', () => {
 					await wrapper.setData({
 						state: {
 							user_oidc_enabled: true,
+							user_oidc_supported: true,
 						},
 					})
 					const authMethodSaveButton = authorizationMethodForm.find(selectors.authorizationMethodSaveButton)
@@ -991,6 +996,7 @@ describe('AdminSettings.vue', () => {
 						await wrapper.setData({
 							state: {
 								user_oidc_enabled: true,
+								user_oidc_supported: true,
 							},
 						})
 						const expectedDialogMessage = 'If you proceed this method, you will have an OIDC based authorization configuration which will delete'
