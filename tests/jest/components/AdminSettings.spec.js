@@ -107,7 +107,7 @@ const selectors = {
 	setupIntegrationDocumentationLinkSelector: '.settings--documentation-info',
 	adminAuditNoteCardInfoSelector: '[type="info"]',
 	encryptionNoteCardWarningSelector: '.notecard--warning',
-	appNotSupportedError: '[type="error"]'
+	appNotSupportedError: '[type="error"]',
 }
 
 const completeOAUTH2IntegrationState = {
@@ -875,7 +875,6 @@ describe('AdminSettings.vue', () => {
 				await wrapper.setData({
 					state: {
 						user_oidc_enabled: false,
-						user_oidc_supported: true,
 					},
 				})
 				const openIDProviderDisabled = wrapper.find(selectors.openIdIdentityDisabled)
@@ -890,6 +889,16 @@ describe('AdminSettings.vue', () => {
 					},
 				})
 				expect(wrapper.find(selectors.openIdIdentityDisabled).exists()).toBe(false)
+			})
+
+			it('should disable "OpenID identity provider" radio button for user_oidc app installed but not supported', async () => {
+				await wrapper.setData({
+					state: {
+						user_oidc_enabled: true,
+						user_oidc_supported: false,
+					},
+				})
+				expect(wrapper.find(selectors.openIdIdentityDisabled).exists()).toBe(true)
 			})
 
 			it('should show openproject oauth form for "oauth2" method selected', async () => {
