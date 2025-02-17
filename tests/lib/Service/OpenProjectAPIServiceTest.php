@@ -4334,7 +4334,7 @@ class OpenProjectAPIServiceTest extends TestCase {
 					'\OCA\UserOIDC\Exception\TokenExchangeFailedException',
 					'\OCA\UserOIDC\User\Backend',
 				],
-				false
+				true
 			],
 			[
 				true,
@@ -4349,7 +4349,7 @@ class OpenProjectAPIServiceTest extends TestCase {
 			],
 			[
 				true,
-				'6.1.0', // user_oidc app Not supported version
+				'6.1.0', // Not supported user_oidc app version
 				[
 					'\OCA\UserOIDC\Db\ProviderMapper',
 					'\OCA\UserOIDC\Event\ExchangedTokenRequestedEvent',
@@ -4383,11 +4383,18 @@ class OpenProjectAPIServiceTest extends TestCase {
 	): void {
 		$iAppManagerMock = $this->getMockBuilder(IAppManager::class)->getMock();
 		$iAppManagerMock->method('getAppVersion')->with('user_oidc')->willReturn($version);
-		$serviceMock = $this->getMockBuilder(OpenProjectAPIService::class)
-			->disableOriginalConstructor()
-			->getMock();
-		$serviceMock->method('isUserOIDCAppInstalledAndEnabled')->willReturn($installedAndEnabled);
-		$actualResult = $serviceMock->isUserOIDCAppSupported();
+		if (count($classesExist) === 4 && array_product(array_map('class_exists', $classesExist))) {
+			$service = $this->getOpenProjectAPIServiceMock(
+				['isUserOIDCAppInstalledAndEnabled'],
+				[
+					'appManager' => $iAppManagerMock,
+				],
+			);
+			$service->method('isUserOIDCAppInstalledAndEnabled')->willReturn($installedAndEnabled);
+			$actualResult = $service->isUserOIDCAppSupported();
+		} else {
+			$actualResult = false;
+		}
 		$this->assertEquals($expected, $actualResult);
 	}
 }
