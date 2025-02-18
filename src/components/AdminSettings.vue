@@ -86,11 +86,12 @@
 						<NcCheckboxRadioSwitch class="radio-check"
 							:checked.sync="authorizationMethod.authorizationMethodSet"
 							:value="authMethods.OIDC"
-							:disabled="!isOIDCAppInstalledAndEnabled"
+							:disabled="!isOIDCAppInstalledAndEnabled || !state.user_oidc_supported"
 							type="radio">
 							{{ authMethodsLabel.OIDC }}
 						</NcCheckboxRadioSwitch>
 						<p v-if="!isOIDCAppInstalledAndEnabled" class="oidc-app-check-description" v-html="getOIDCAppNotInstalledHintText" /> <!-- eslint-disable-line vue/no-v-html -->
+						<ErrorLabel v-if="isOIDCAppInstalledAndEnabled && !state.user_oidc_supported" :error="errorMessages.appNotSupported('User_Oidc', state.user_oidc_minimum_version)" type="error" />
 					</div>
 				</div>
 				<div v-else>
@@ -534,6 +535,8 @@ import SettingsTitle from '../components/settings/SettingsTitle.vue'
 import { F_MODES, FORM, USER_SETTINGS, AUTH_METHOD, AUTH_METHOD_LABEL } from '../utils.js'
 import TermsOfServiceUnsigned from './admin/TermsOfServiceUnsigned.vue'
 import dompurify from 'dompurify'
+import { messagesFmt as errorMessages } from '../constants/messages.js'
+import ErrorLabel from './ErrorLabel.vue'
 export default {
 	name: 'AdminSettings',
 	components: {
@@ -552,6 +555,7 @@ export default {
 		NcCheckboxRadioSwitch,
 		TermsOfServiceUnsigned,
 		NcNoteCard,
+		ErrorLabel,
 	},
 	data() {
 		return {
@@ -618,6 +622,7 @@ export default {
 				currentTargetedAudienceClientIdSelected: null,
 			},
 			registeredOidcProviders: [],
+			errorMessages,
 		}
 	},
 	computed: {
