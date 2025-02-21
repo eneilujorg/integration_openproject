@@ -58,37 +58,6 @@
 
    Traefik: [traefik.local](https://traefik.local)
 
-### Installing Extra Apps
-
-By default, `integration_openproject` app is enabled in Nextcloud. To install other apps, you can clone and build the desired apps in the `apps` directory.
-
-1. Clone and build the app in the `apps` directory
-
-   ```bash
-   cd apps
-   git clone git@github.com:nextcloud/<app>.git
-
-   cd <app>
-   # build the app
-   ```
-
-2. Enable the app in Nextcloud
-
-   ```bash
-   # integration_openproject/dev
-   cd ../../
-
-   docker compose exec -u www-data nextcloud php occ a:e <app>
-   ```
-
-If permission issues occur, you can run the following command:
-
-```bash
-# <integration_openproject>/dev
-
-docker compose exec nextcloud chown www-data -R custom_apps/<app>
-```
-
 ### Keycloak Realm Configuration
 
 When the setup is run with Keycloak, new realm will be initialized with necessary clients, permissions, and some demo users. The following are the details:

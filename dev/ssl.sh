@@ -21,3 +21,7 @@ certutil -A -n "NC-OP Integration Root CA" -t TC -d sql:"$cert_db" -i "$tmp_cert
 certutil -M -d sql:"$cert_db"
 # list certs
 certutil -L -d sql:"$cert_db"
+
+# configure NC
+docker compose exec -u www-data nextcloud php occ config:system:set allow_local_remote_servers --value 1
+docker compose exec -u www-data nextcloud php occ security:certificates:import /etc/ssl/certs/ca-certificates.crt
