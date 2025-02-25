@@ -64,13 +64,15 @@ services:
       traefik.http.routers.traefik.service: api@internal
       traefik.http.routers.traefik.entrypoints: websecure
 
-  nextcloud-db:
+  # DO NOT RENAME THIS SERVICE
+  # The service name 'database-pgsql' is used by the nextcloud container internally
+  database-pgsql:
     image: postgres:14
-    restart: always
+    restart: unless-stopped
     environment:
       POSTGRES_DB: nextcloud
-      POSTGRES_USER: nextcloud
-      POSTGRES_PASSWORD: nextcloud
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
     volumes:
       - ncdb:/var/lib/postgresql/data
     networks:
@@ -83,22 +85,28 @@ services:
       start_period: 10s
 
   nextcloud:
-    image: nextcloud:${NEXTCLOUD_IMAGE_TAG:-apache}
-    restart: always
+    image: ghcr.io/juliusknorr/nextcloud-dev-php${NEXTCLOUD_IMAGE_PHP:-83}:${NEXTCLOUD_IMAGE_TAG:-master}
+    restart: unless-stopped
     entrypoint: bash
     command: /nextcloud.sh
     environment:
-      OVERWRITEPROTOCOL: 'https'
-      OVERWRITECLIURL: 'https://nextcloud.local'
-      PHP_UPLOAD_SIZE: '1024M'
-      POSTGRES_HOST: nextcloud-db
-      POSTGRES_DB: nextcloud
-      POSTGRES_USER: nextcloud
-      POSTGRES_PASSWORD: nextcloud
+      SQL: pgsql
+      VIRTUAL_HOST: nextcloud
+      SERVER_BRANCH: ${NEXTCLOUD_BRANCH:-stable31}
+      NEXTCLOUD_AUTOINSTALL: YES
+      NEXTCLOUD_TRUSTED_DOMAINS: nextcloud.local
+      # [INFO] Pre-defined database config
+      # - admin-user: admin
+      # - admin-pass: admin
+      # - database-name: nextcloud
+      # - database-user: postgres
+      # - database-pass: postgres
+      # - database-host: database-pgsql
     volumes:
       - ./nextcloud.sh:/nextcloud.sh
       - ./apps:/var/www/html/custom_apps
       - ../:/var/www/html/custom_apps/integration_openproject:ro
+      - ./nextcloud:/shared
       - ncdata:/var/www/html
       - apache_conf:/etc/apache2
       - step:/step:ro
@@ -107,25 +115,12 @@ services:
     depends_on:
       traefik:
         condition: service_started
-      nextcloud-db:
+      database-pgsql:
         condition: service_healthy
     labels:
       traefik.enable: true
       traefik.http.routers.nextcloud.rule: Host(`nextcloud.local`)
       traefik.http.routers.nextcloud.entrypoints: websecure
-
-  cron:
-    image: nextcloud:apache
-    restart: always
-    entrypoint: /cron.sh
-    volumes:
-      - ncdata:/var/www/html
-      - apache_conf:/etc/apache2
-    networks:
-      - nc-op
-    depends_on:
-      nextcloud-db:
-        condition: service_healthy
 
   openproject:
     image: openproject/openproject:${OPENPROJECT_IMAGE_TAG:-15}
