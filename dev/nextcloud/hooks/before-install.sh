@@ -14,3 +14,7 @@ if [ -d "$STEP_CERTS_DIR" ]; then
     cp "$STEP_CERTS_DIR"/root_ca.crt /usr/local/share/ca-certificates/Step_Root_CA.crt
     update-ca-certificates
 fi
+
+# fix custom_apps permissions
+chown www-data custom_apps
+find ./custom_apps -mindepth 1 -path ./custom_apps/integration_openproject -prune -o -exec chown www-data {} \;

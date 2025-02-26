@@ -95,6 +95,8 @@ services:
       SERVER_BRANCH: ${NEXTCLOUD_BRANCH:-stable31}
       NEXTCLOUD_AUTOINSTALL: YES
       NEXTCLOUD_TRUSTED_DOMAINS: nextcloud.local
+      NEXTCLOUD_AUTOINSTALL_APPS: oidc groupfolders
+      NEXTCLOUD_AUTOINSTALL_APPS_WAIT_TIME: 60
       # [INFO] Pre-defined database config
       # - admin-user: admin
       # - admin-pass: admin
@@ -128,6 +130,7 @@ services:
     entrypoint: bash
     command: /openproject.sh
     environment:
+      OPENPROJECT_LOG__LEVEL: error
       OPENPROJECT_HOST__NAME: '${OPENPROJECT_DEV_HOST:-openproject.local}'
       OPENPROJECT_HTTPS: true
       OPENPROJECT_DEV_EXTRA_HOSTS: '${OPENPROJECT_DEV_HOST:-openproject.local}'
