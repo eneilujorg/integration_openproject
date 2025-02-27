@@ -803,6 +803,10 @@ class OpenProjectAPIServiceTest extends TestCase {
 		$urlGeneratorMock
 			->method('getBaseUrl')
 			->willReturn($baseUrl);
+		$this->defaultConfigMock
+			->method('getSystemValueString')
+			->with($this->equalTo('overwrite.cli.url'))
+			->willReturn($baseUrl);
 
 		$constructArgs = $this->getOpenProjectAPIServiceConstructArgs([
 			'avatarManager' => $avatarManagerMock,
