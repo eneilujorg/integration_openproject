@@ -4,8 +4,12 @@ OC.L10N.register(
     "Error getting OAuth access token" : "Villa við að ná í OAuth-aðgangsteikn",
     "Error during OAuth exchanges" : "Villa í OAuth-samskiptum",
     "OAuth access token refused" : "OAuth-aðgangsteikni hafnað",
+    "Documentation" : "Hjálparskjöl",
     "Cancel" : "Hætta við",
     "Save" : "Vista",
+    "Incorrect access token" : "Rangt aðgangsteikn",
+    "Connected as {user}" : "Tengt sem {user}",
+    "Enable navigation link" : "Virkja flakktengil",
     "Copied!" : "Afritað!",
     "Copied to the clipboard" : "Afritað á klippispjaldið",
     "Details" : "Details",
@@ -16,10 +20,6 @@ OC.L10N.register(
     "Mark as read" : "Merkja sem lesið",
     "Unlink" : "Aftengja",
     "Connected accounts" : "Tengdir aðgangar",
-    "Reset" : "Endurstilla",
-    "Enable navigation link" : "Virkja flakktengil",
-    "Connected as {user}" : "Tengt sem {user}",
-    "Incorrect access token" : "Rangt aðgangsteikn",
-    "Documentation" : "Hjálparskjöl"
+    "Reset" : "Endurstilla"
 },
 "nplurals=2; plural=(n % 10 != 1 || n % 100 == 11);");

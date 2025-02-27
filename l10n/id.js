@@ -5,8 +5,12 @@ OC.L10N.register(
     "Error during OAuth exchanges" : "Terjadi kesalahan saat penukaran OAuth",
     "Bad HTTP method" : "Metode HTTP tidak benar",
     "OAuth access token refused" : "Token akses OAuth ditolak",
+    "Documentation" : "Dokumentasi",
     "Cancel" : "Membatalkan",
     "Save" : "Simpan",
+    "Incorrect access token" : "Token akses tidak benar",
+    "Connected as {user}" : "Terhubung sebagai {user}",
+    "Enable navigation link" : "Aktifkan tautan navigasi",
     "Copied!" : "Tersalin!",
     "Details" : "Detail",
     "Start typing to search" : "Mulai mengetik untuk mencari",
@@ -15,10 +19,6 @@ OC.L10N.register(
     "Create" : "Buat",
     "Mark as read" : "tandai sudah dibaca",
     "Connected accounts" : "Akun terhubung",
-    "Reset" : "Setel ulang",
-    "Enable navigation link" : "Aktifkan tautan navigasi",
-    "Connected as {user}" : "Terhubung sebagai {user}",
-    "Incorrect access token" : "Token akses tidak benar",
-    "Documentation" : "Dokumentasi"
+    "Reset" : "Setel ulang"
 },
 "nplurals=1; plural=0;");

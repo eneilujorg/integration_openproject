@@ -5,8 +5,12 @@ OC.L10N.register(
     "Error during OAuth exchanges" : "OAuth 通信中のエラー",
     "Bad HTTP method" : "不正なHTTPメソッド",
     "OAuth access token refused" : "OAuth アクセストークンが拒否されました",
+    "Documentation" : "ドキュメント",
     "Cancel" : "キャンセル",
     "Save" : "保存",
+    "Incorrect access token" : "正しくないアクセストークン",
+    "Connected as {user}" : "{user} に接続済み",
+    "Enable navigation link" : "ナビゲーションリンクを有効化",
     "Copied!" : "コピーしました！",
     "Copied to the clipboard" : "クリップボードにコピーされました",
     "Details" : "詳細",
@@ -17,10 +21,6 @@ OC.L10N.register(
     "Mark as read" : "既読にする",
     "Unlink" : "アンリンク",
     "Connected accounts" : "接続済みアカウント",
-    "Reset" : "リセット",
-    "Enable navigation link" : "ナビゲーションリンクを有効化",
-    "Connected as {user}" : "{user} に接続済み",
-    "Incorrect access token" : "正しくないアクセストークン",
-    "Documentation" : "ドキュメント"
+    "Reset" : "リセット"
 },
 "nplurals=1; plural=0;");

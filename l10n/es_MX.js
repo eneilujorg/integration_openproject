@@ -1,6 +1,7 @@
 OC.L10N.register(
     "integration_openproject",
     {
+    "Documentation" : "Documentación",
     "Cancel" : "Cancelar",
     "Save" : "Guardar",
     "Copied!" : "¡Copiado!",
@@ -10,7 +11,6 @@ OC.L10N.register(
     "Select a user or group" : "Seleccionar un usuario o grupo",
     "Description" : "Descripción",
     "Create" : "Crear",
-    "Reset" : "Reiniciar",
-    "Documentation" : "Documentación"
+    "Reset" : "Reiniciar"
 },
 "nplurals=3; plural=n == 1 ? 0 : n != 0 && n % 1000000 == 0 ? 1 : 2;");

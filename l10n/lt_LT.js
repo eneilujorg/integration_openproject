@@ -6,8 +6,12 @@ OC.L10N.register(
     "Direct download error" : "Tiesioginio atsisiuntimo klaida",
     "Bad HTTP method" : "Blogas HTTP metodas",
     "OAuth access token refused" : "„OAuth“ prieigos raktas atmestas",
+    "Documentation" : "Dokumentacija",
+    "Yes, replace" : "Taip, pakeisti",
     "Cancel" : "Atsisakyti",
     "Save" : "Įrašyti",
+    "Invalid token" : "Neteisingas prieigos raktas",
+    "Connected as {user}" : "Prisijungta kaip {user}",
     "Copied!" : "Nukopijuota!",
     "Copy value" : "Kopijuoti reikšmę",
     "Copied to the clipboard" : "Nukopijuota į iškarpinę",
@@ -20,11 +24,7 @@ OC.L10N.register(
     "Mark as read" : "Žymėti kaip skaitytą",
     "Unlink" : "Atsieti",
     "Connected accounts" : "Prijungtos paskyros",
-    "Reset" : "Atstatyti",
-    "Yes, replace" : "Taip, pakeisti",
     "Yes, reset" : "Taip, atstatyti",
-    "Connected as {user}" : "Prisijungta kaip {user}",
-    "Invalid token" : "Neteisingas prieigos raktas",
-    "Documentation" : "Dokumentacija"
+    "Reset" : "Atstatyti"
 },
 "nplurals=4; plural=(n % 10 == 1 && (n % 100 > 19 || n % 100 < 11) ? 0 : (n % 10 >= 2 && n % 10 <=9) && (n % 100 > 19 || n % 100 < 11) ? 1 : n % 1 != 0 ? 2: 3);");

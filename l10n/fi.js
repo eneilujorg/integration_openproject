@@ -5,8 +5,12 @@ OC.L10N.register(
     "Error during OAuth exchanges" : "Virhe OAuth-tunnistautumisessa",
     "Bad HTTP method" : "Virheellinen HTTP-metodi",
     "OAuth access token refused" : "OAuth-valtuutus hylätty",
+    "Documentation" : "Dokumentaatio",
     "Cancel" : "Peruuta",
     "Save" : "Tallenna",
+    "Incorrect access token" : "Virheellinen käyttöpoletti",
+    "Connected as {user}" : "Yhdistetty käyttäjänä {user}",
+    "Enable navigation link" : "Näytä navigointipalkissa",
     "Copied!" : "Kopioitu!",
     "Copied to the clipboard" : "Kopioitu leikepöydälle",
     "Details" : "Tiedot",
@@ -17,10 +21,6 @@ OC.L10N.register(
     "Mark as read" : "Merkitse luetuksi",
     "Unlink" : "Poista linkitys",
     "Connected accounts" : "Yhdistetyt tilit",
-    "Reset" : "Palauta",
-    "Enable navigation link" : "Näytä navigointipalkissa",
-    "Connected as {user}" : "Yhdistetty käyttäjänä {user}",
-    "Incorrect access token" : "Virheellinen käyttöpoletti",
-    "Documentation" : "Dokumentaatio"
+    "Reset" : "Palauta"
 },
 "nplurals=2; plural=(n != 1);");

@@ -5,8 +5,13 @@ OC.L10N.register(
     "Error during OAuth exchanges" : "Napaka med izmenjavo podatkov OAuth",
     "Bad HTTP method" : "Neustrezen način HTTP",
     "OAuth access token refused" : "Žeton OAuth za dostop je bil zavrnjen",
+    "Documentation" : "Dokumentacija",
     "Cancel" : "Prekliči",
     "Save" : "Shrani",
+    "Incorrect access token" : "Neveljaven žeton za dostop",
+    "Connected as {user}" : "Povezan je uporabniški račun {user}",
+    "Enable navigation link" : "Omogoči povezave za krmarjenje",
+    "Enable unified search for tickets" : "Omogoči enotno iskanje med objavami",
     "Copied!" : "Kopirano!",
     "Details" : "Podrobnosti",
     "Start typing to search" : "Vpišite niz za iskanje …",
@@ -17,11 +22,6 @@ OC.L10N.register(
     "Unlink" : "Odstrani povezavo",
     "OAuth access token could not be obtained:" : "Žetona OAuth za dostop ni mogoče pridobiti:",
     "Connected accounts" : "Povezani računi",
-    "Reset" : "Ponastavi",
-    "Enable navigation link" : "Omogoči povezave za krmarjenje",
-    "Connected as {user}" : "Povezan je uporabniški račun {user}",
-    "Enable unified search for tickets" : "Omogoči enotno iskanje med objavami",
-    "Incorrect access token" : "Neveljaven žeton za dostop",
-    "Documentation" : "Dokumentacija"
+    "Reset" : "Ponastavi"
 },
 "nplurals=4; plural=(n%100==1 ? 0 : n%100==2 ? 1 : n%100==3 || n%100==4 ? 2 : 3);");

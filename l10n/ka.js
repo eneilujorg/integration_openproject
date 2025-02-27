@@ -1,6 +1,7 @@
 OC.L10N.register(
     "integration_openproject",
     {
+    "Documentation" : "Documentation",
     "Cancel" : "Cancel",
     "Save" : "Save",
     "Copied!" : "Copied!",
@@ -11,7 +12,6 @@ OC.L10N.register(
     "Create" : "Create",
     "Mark as read" : "Mark as read",
     "Unlink" : "Unlink",
-    "Reset" : "Reset",
-    "Documentation" : "Documentation"
+    "Reset" : "Reset"
 },
 "nplurals=2; plural=(n!=1);");

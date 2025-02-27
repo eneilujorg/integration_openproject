@@ -3,8 +3,15 @@
     "Error during OAuth exchanges" : "Fel vid utväxling av OAuth-token",
     "Bad HTTP method" : "Felaktig HTTP-metod",
     "OAuth access token refused" : "OAuth-token avvisades",
+    "Documentation" : "Dokumentation",
     "Cancel" : "Avbryt",
     "Save" : "Spara",
+    "Incorrect access token" : "Ogiltig åtkomst-token",
+    "Invalid token" : "Ogiltig token",
+    "Connected as {user}" : "Ansluten som {user}",
+    "Enable navigation link" : "Aktivera navigeringslänk",
+    "Enable unified search for tickets" : "Aktivera enhetlig sökning efter ärenden",
+    "Warning, everything you type in the search bar will be sent to your OpenProject instance." : "Varning, allt du skriver i sökfältet kommer att skickas till din OpenProject-instans.",
     "Copied!" : "Kopierad!",
     "Copied to the clipboard" : "Kopierat till urklipp",
     "Details" : "Detaljer",
@@ -15,13 +22,6 @@
     "Mark as read" : "Markera som läst",
     "OAuth access token could not be obtained:" : "OAuth-åtkomsttoken kunde inte erhållas:",
     "Connected accounts" : "Anslutna konton",
-    "Reset" : "Återställ",
-    "Enable navigation link" : "Aktivera navigeringslänk",
-    "Connected as {user}" : "Ansluten som {user}",
-    "Enable unified search for tickets" : "Aktivera enhetlig sökning efter ärenden",
-    "Warning, everything you type in the search bar will be sent to your OpenProject instance." : "Varning, allt du skriver i sökfältet kommer att skickas till din OpenProject-instans.",
-    "Incorrect access token" : "Ogiltig åtkomst-token",
-    "Invalid token" : "Ogiltig token",
-    "Documentation" : "Dokumentation"
+    "Reset" : "Återställ"
 },"pluralForm" :"nplurals=2; plural=(n != 1);"
 }

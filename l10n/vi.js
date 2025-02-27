@@ -2,8 +2,10 @@ OC.L10N.register(
     "integration_openproject",
     {
     "Bad HTTP method" : "Phương thức HTTP không hợp lệ",
+    "Documentation" : "Tài liệu",
     "Cancel" : "Hủy",
     "Save" : "Lưu",
+    "Connected as {user}" : "Kết nối bởi {user}",
     "Copied!" : "Đã sao chép!",
     "Details" : "Chi tiết",
     "Start typing to search" : "Nhập để tìm kiếm",
@@ -11,8 +13,6 @@ OC.L10N.register(
     "Create" : "‎Tạo‎",
     "Mark as read" : "Đánh dấu đã đọc",
     "Connected accounts" : "Đã kết nối tài khoản",
-    "Reset" : "Đặt lại",
-    "Connected as {user}" : "Kết nối bởi {user}",
-    "Documentation" : "Tài liệu"
+    "Reset" : "Đặt lại"
 },
 "nplurals=1; plural=0;");

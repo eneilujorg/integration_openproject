@@ -5,8 +5,13 @@ OC.L10N.register(
     "Error during OAuth exchanges" : "Errore cuncambiende OAuth",
     "Bad HTTP method" : "Mètodu HTTP no bàlidu",
     "OAuth access token refused" : "Token de intrada OAuth refudadu",
+    "Documentation" : "Documentatzione",
     "Cancel" : "Annulla",
     "Save" : "Sarva",
+    "Incorrect access token" : "Token de intrada non bàlidu",
+    "Connected as {user}" : "Connètidu comente {user}",
+    "Enable navigation link" : "Ativa su ligòngiu de navigatzione",
+    "Enable unified search for tickets" : "Ativa chirca unificada pro is tickets",
     "Copied!" : "Copiados!",
     "Details" : "Detàllios",
     "Start typing to search" : "Cumintza a iscrìere pro chircare",
@@ -16,11 +21,6 @@ OC.L10N.register(
     "Mark as read" : "Marca comente lèghidu",
     "OAuth access token could not be obtained:" : "No at fatu a otènnere su token de intrada OAuth:",
     "Connected accounts" : "Contos connètidos",
-    "Reset" : "Riprìstinu",
-    "Enable navigation link" : "Ativa su ligòngiu de navigatzione",
-    "Connected as {user}" : "Connètidu comente {user}",
-    "Enable unified search for tickets" : "Ativa chirca unificada pro is tickets",
-    "Incorrect access token" : "Token de intrada non bàlidu",
-    "Documentation" : "Documentatzione"
+    "Reset" : "Riprìstinu"
 },
 "nplurals=2; plural=(n != 1);");

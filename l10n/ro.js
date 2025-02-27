@@ -5,8 +5,10 @@ OC.L10N.register(
     "Error during OAuth exchanges" : "Eroare în schimbarea OAuth",
     "Bad HTTP method" : "Metodă HTTP nepotrivită",
     "OAuth access token refused" : "Token-ul OAuth a fost refuzat",
+    "Documentation" : "Documentație",
     "Cancel" : "Anulare",
     "Save" : "Salvează",
+    "Enable navigation link" : "Pornește link-ul de navifare",
     "Copied!" : "S-a copiat!",
     "Details" : "Detalii",
     "Start typing to search" : "Tastați pentru căutare",
@@ -17,8 +19,6 @@ OC.L10N.register(
     "mentioned" : "menționat",
     "Unlink" : "Deconectare",
     "Connected accounts" : "Conturile conectate",
-    "Reset" : "Resetare",
-    "Enable navigation link" : "Pornește link-ul de navifare",
-    "Documentation" : "Documentație"
+    "Reset" : "Resetare"
 },
 "nplurals=3; plural=(n==1?0:(((n%100>19)||((n%100==0)&&(n!=0)))?2:1));");
