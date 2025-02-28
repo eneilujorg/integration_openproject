@@ -90,7 +90,7 @@ class Admin implements ISettings {
 				'server_side_encryption_enabled' => $this->openProjectAPIService->isServerSideEncryptionEnabled(),
 				'encryption_enabled_for_groupfolders' => $this->config->getAppValue('groupfolders', 'enable_encryption', '') === 'true'
 			],
-			'oidc_provider' => $this->openProjectAPIService->getRegisteredOidcProviders(),
+			'oidc_providers' => $this->openProjectAPIService->getRegisteredOidcProviders(),
 			'user_oidc_enabled' => $this->openProjectAPIService->isUserOIDCAppInstalledAndEnabled()
 		];
 
