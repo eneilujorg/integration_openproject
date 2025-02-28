@@ -239,7 +239,7 @@ class OpenProjectAPIService {
 	 * wrapper around IURLGenerator::getBaseUrl() to make it easier to mock in tests
 	 */
 	public function getBaseUrl(): string {
-		return $this->urlGenerator->getBaseUrl();
+		return $this->config->getSystemValueString('overwrite.cli.url');
 	}
 
 	/**
@@ -1500,7 +1500,7 @@ class OpenProjectAPIService {
 		}
 		$filters[] = [
 			'storageUrl' =>
-				['operator' => '=', 'values' => [$this->urlGenerator->getBaseUrl()]],
+				['operator' => '=', 'values' => [$this->getBaseUrl()]],
 			'userAction' =>
 				['operator' => '&=', 'values' => ["file_links/manage", "work_packages/create"]]
 		];

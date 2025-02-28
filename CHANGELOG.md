@@ -20,6 +20,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Show proper error message in the dashboard based on auth method [#770](https://github.com/nextcloud/integration_openproject/pull/770)
 - Drop application's support for Nextcloud 27 [#779](https://github.com/nextcloud/integration_openproject/pull/779)
 
+### Fixed
+- choose correct base URL for OCS requests [#780](https://github.com/nextcloud/integration_openproject/pull/780)
+
 ## 2.8.0 - 2025-02-24
 
 ### Added
