@@ -2,36 +2,51 @@ on:
   workflow_call:
     inputs:
       branch:
+        required: true
         type: string
+      nextcloud_versions:
+        required: false
+        type: string
+        default: "27 28 29 30 31"
+      php_versions:
+        required: false
+        type: string
+        default: "8.1 8.2 8.3"
 
 name: CI
 
 jobs:
+  create-phpunit-matrix:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout for nightly CI
+        if: github.event_name == 'schedule'
+        uses: actions/checkout@v3
+        with:
+          ref: ${{ inputs.branch }}
+
+      - name: Checkout
+        if: github.event_name != 'schedule'
+        uses: actions/checkout@v3
+
+      - name: Create matrix
+        id: create-matrix
+        env:
+          NEXTCLOUD_VERSIONS: ${{ inputs.nextcloud_versions }}
+          PHP_VERSIONS: ${{ inputs.php_versions }}
+          DEFAULT_PHP_VERSION: "8.2"
+        run: |
+          MATRIX=$(./.github/scripts/generate-matrix.sh)
+          echo "matrix={\"include\": [$MATRIX]}" >> $GITHUB_OUTPUT
+    outputs:
+      matrix: ${{ steps.create-matrix.outputs.matrix }}
+
   unittest-linting:
     name: unit tests and linting
+    needs: create-phpunit-matrix
+    if: ${{ success() }}
     strategy:
-      matrix:
-        nextcloudVersion: [ stable31, master ]
-        phpVersion: [ 8.1, 8.2, 8.3 ]
-        isReleaseBranch:
-          - ${{ startsWith(inputs.branch, 'release/') || startsWith(github.base_ref, 'release/') || startsWith(github.ref, 'refs/heads/release/') }}
-        # will be overridden by the include section
-        exclude:
-          - nextcloudVersion: master
-            isReleaseBranch: true
-          - nextcloudVersion: master
-            phpVersion: 8.1
-          - nextcloudVersion: master
-            phpVersion: 8.2
-        include:
-          - nextcloudVersion: stable27
-            phpVersion: 8.0
-          - nextcloudVersion: stable28
-            phpVersion: 8.1
-          - nextcloudVersion: stable29
-            phpVersion: 8.1
-          - nextcloudVersion: stable30
-            phpVersion: 8.2
+      matrix: ${{ fromJson(needs.create-phpunit-matrix.outputs.matrix) }}
     runs-on: ubuntu-20.04
     steps:
       - name: Checkout for nightly CI
@@ -82,7 +97,7 @@ jobs:
       - name: Install PHP Dependencies
         run: |
           # The following if block can be removed once Nextcloud no longer supports PHP 8.0
-          if [ "${{matrix.phpVersion}}" -eq 8 ]; then
+          if [ "${{matrix.phpVersion}}" = "8.0" ]; then
             # Composer updated to php 8.0 with pact 7.1 because pact 10.0.0-beta2 is incompatible with php 8.0.
             sed -i 's/10.0.0-beta2/7.1/g' composer.json
             composer update
@@ -95,7 +110,7 @@ jobs:
       - name: PHP code analysis and linting
         run: |
           # The following if block can be removed once Nextcloud no longer supports PHP 8.0
-          if [ "${{matrix.phpVersion}}" -eq 8 ]; then
+          if [ "${{matrix.phpVersion}}" = "8.0" ]; then
             # Ignoring the pact test for php 8.0
             sed -i '/<ignoreFiles>/a \ <file name="tests/lib/Service/OpenProjectAPIServiceTest.php"/>' psalm.xml
           fi
@@ -108,7 +123,7 @@ jobs:
       - name: JS Lint
         run: make lint-js || ( echo 'Please run `make lint-js-fix` to format your code' && exit 1 )
 
-      - name: PHP & Vue Unit Tests
+      - name: install apps
         run: |
           git clone --depth 1 https://github.com/nextcloud/groupfolders.git -b ${{ matrix.nextcloudVersion }} server/apps/groupfolders
           mkdir -p server/apps/integration_openproject
@@ -116,9 +131,12 @@ jobs:
           cd server
           ./occ a:e groupfolders
           ./occ a:e integration_openproject
-          cd apps/integration_openproject
+
+      - name: PHP & Vue Unit Tests
+        run: |
+          cd server/apps/integration_openproject
           # The following if block can be removed once Nextcloud no longer supports PHP 8.0
-          if [ "${{ matrix.phpVersion }}" -eq 8 ]; then
+          if [ "${{ matrix.phpVersion }}" == "8.0" ]; then
             make phpunitforphp8.0 || (echo "A few of the unit tests were unsuccessful. Rerunning the unit test once again......" && make phpunitforphp8.0)
           else
             make phpunit || (echo "A few of the unit tests were unsuccessful. Rerunning the unit test once again......" && make phpunit)
@@ -183,49 +201,39 @@ jobs:
           min_coverage: '56'
           path: './server/apps/integration_openproject/coverage/php/lcov.info'
 
+  create-api-matrix:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout for nightly CI
+        if: github.event_name == 'schedule'
+        uses: actions/checkout@v3
+        with:
+          ref: ${{ inputs.branch }}
+
+      - name: Checkout
+        if: github.event_name != 'schedule'
+        uses: actions/checkout@v3
+
+      - name: Create matrix
+        id: create-matrix
+        env:
+          NEXTCLOUD_VERSIONS: ${{ inputs.nextcloud_versions }}
+          PHP_VERSIONS: ${{ inputs.php_versions }}
+          DEFAULT_PHP_VERSION: "8.2"
+          DEFAULT_DATABASE: "mysql"
+          EXTRA_DATABASES: "pgsql"
+        run: |
+          MATRIX=$(./.github/scripts/generate-matrix.sh)
+          echo "matrix={\"include\": [$MATRIX]}" >> $GITHUB_OUTPUT
+    outputs:
+      matrix: ${{ steps.create-matrix.outputs.matrix }}
+
   api-tests:
     name: API tests
+    needs: create-api-matrix
+    if: ${{ success() }}
     strategy:
-      matrix:
-        nextcloudVersion: [ stable31, master ]
-        phpVersionMajor: [ 8 ]
-        phpVersionMinor: [ 1, 2, 3 ]
-        database: [ mysql ]
-        isReleaseBranch:
-          - ${{ startsWith(inputs.branch, 'release/') || startsWith(github.base_ref, 'release/') || startsWith(github.ref, 'refs/heads/release/') }}
-        # will be overridden by the include section
-        exclude:
-          - nextcloudVersion: master
-            isReleaseBranch: true
-          - nextcloudVersion: master
-            phpVersionMajor: 8
-            phpVersionMinor: 1
-          - nextcloudVersion: master
-            phpVersionMajor: 8
-            phpVersionMinor: 2
-        include:
-          # Each database once on the newest Server with preinstalled PHP version
-          - nextcloudVersion: stable31
-            phpVersionMajor: 8
-            phpVersionMinor: 1
-            database: pgsql
-          - nextcloudVersion: stable27
-            phpVersionMajor: 8
-            phpVersionMinor: 0
-            database: mysql
-          - nextcloudVersion: stable28
-            phpVersionMajor: 8
-            phpVersionMinor: 1
-            database: mysql
-          - nextcloudVersion: stable29
-            phpVersionMajor: 8
-            phpVersionMinor: 1
-            database: mysql
-          - nextcloudVersion: stable30
-            phpVersionMajor: 8
-            phpVersionMinor: 2
-            database: mysql
-
+      matrix: ${{ fromJson(needs.create-api-matrix.outputs.matrix) }}
     runs-on: ubuntu-20.04
     container:
       image: public.ecr.aws/lts/ubuntu:20.04
@@ -322,9 +330,11 @@ jobs:
           NEXTCLOUD_BASE_URL: http://nextcloud
         run: |
           # The following if block can be removed once Nextcloud no longer supports PHP 8.0
-          if [ "${{matrix.phpVersionMajor}}" -eq 8 ] && [ "${{matrix.phpVersionMinor}}" -eq 0 ]; then
+          if [ "${{matrix.phpVersion}}" = "8.0" ]; then
             # Composer updated to php 8.0 with pact 7.1 because pact 10.0.0-beta2 is incompatible with php 8.0.
+            echo "PHP 8.0: Updating composer.json"
             sed -i 's/10.0.0-beta2/7.1/g' composer.json
+            cat composer.json
             composer update
           fi
           composer install --no-progress --prefer-dist --optimize-autoloader
